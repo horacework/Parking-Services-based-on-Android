@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="55dp"
+    android:background="#ffffff"
+    android:orientation="horizontal" >
+
+    <LinearLayout
+        android:id="@+id/Tab_Daohang"
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center" >
+
+        <ImageButton
+            android:id="@+id/Img_Daohang"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:background="#00000000"
+            android:scaleType="fitXY"
+            
+            android:src="@mipmap/daohang" />
+
+        <TextView
+            android:id="@+id/Font_Daohang"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#272636"
+            android:text="地图" />>
+    </LinearLayout>
+    
+    <LinearLayout
+        android:id="@+id/Tab_Book"
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center" >
+
+        <ImageButton
+            android:id="@+id/Img_Book"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:background="#00000000"
+            android:scaleType="fitXY"
+            
+            android:src="@mipmap/book" />
+
+        <TextView
+            android:id="@+id/Font_Book"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#272636"
+            android:text="预订" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/Tab_Tansuo"
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center" >
+
+        <ImageButton
+            android:id="@+id/Img_Tansuo"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:background="#00000000"
+            android:scaleType="fitXY"
+            
+            android:src="@mipmap/tansuo" />
+
+        <TextView
+            android:id="@+id/Font_Tansuo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#272636"
+            android:text="发现" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/Tab_Me"
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center" >
+
+        <ImageButton
+            android:id="@+id/Img_Me"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:background="#00000000"
+            android:scaleType="fitXY"
+            
+            android:src="@mipmap/me" />
+
+        <TextView
+            android:id="@+id/Font_Me"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#272636"
+            android:text="我" />
+    </LinearLayout>
+
+</LinearLayout>
