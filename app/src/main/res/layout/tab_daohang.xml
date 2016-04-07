@@ -5,18 +5,24 @@
     android:orientation="vertical" >
     
     
-    <TextView
-        android:id="@+id/position_text"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:gravity="center"
+    <!--<TextView-->
+        <!--android:id="@+id/position_text"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="fill_parent"-->
+        <!--android:gravity="center"-->
 
-        android:textSize="30sp"
-        android:textStyle="bold"/>
+        <!--android:textSize="30sp"-->
+        <!--android:textStyle="bold"/>-->
     <!--<WebView-->
         <!--android:id="@+id/web_view"-->
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="match_parent">-->
     <!--</WebView>-->
+
+    <com.baidu.mapapi.map.MapView
+        android:id="@+id/map_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"/>
 
 </LinearLayout>
