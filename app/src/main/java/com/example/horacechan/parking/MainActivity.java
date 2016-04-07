@@ -10,6 +10,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -36,6 +38,8 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
     private Fragment mTabFragTansuo;
     private Fragment mTabFragMe;
 
+    private final int fontColorUnSelect = 0xff272636;
+    private final int fontColorBeSelect = 0xff11CD6E;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +74,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
         mFontBook = (TextView) findViewById(R.id.Font_Book);
         mFontTansuo = (TextView) findViewById(R.id.Font_Tansuo);
         mFontMe = (TextView) findViewById(R.id.Font_Me);
+
     }
 
     private void setSelect(int i) {
@@ -81,10 +86,11 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
                 if (mTabFragDaohang == null) {
                     mTabFragDaohang = new ParkingFrgment();
                     transaction.add(R.id.id_content, mTabFragDaohang);
+
                 } else {
                     transaction.show(mTabFragDaohang);
                 }
-                mFontDaohang.setTextColor(0xff11CD6E);
+                mFontDaohang.setTextColor(fontColorBeSelect);
                 mImgDaohang.setImageResource(R.mipmap.daohang_press);
                 break;
             case 1:
@@ -94,7 +100,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
                 } else {
                     transaction.show(mTabFragBook);
                 }
-                mFontBook.setTextColor(0xff11CD6E);
+                mFontBook.setTextColor(fontColorBeSelect);
                 mImgBook.setImageResource(R.mipmap.book_press);
                 break;
             case 2:
@@ -104,7 +110,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
                 } else {
                     transaction.show(mTabFragTansuo);
                 }
-                mFontTansuo.setTextColor(0xff11CD6E);
+                mFontTansuo.setTextColor(fontColorBeSelect);
                 mImgTansuo.setImageResource(R.mipmap.tansuo_press);
                 break;
             case 3:
@@ -114,7 +120,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
                 } else {
                     transaction.show(mTabFragMe);
                 }
-                mFontMe.setTextColor(0xff11CD6E);
+                mFontMe.setTextColor(fontColorBeSelect);
                 mImgMe.setImageResource(R.mipmap.me_press);
                 break;
 
@@ -165,10 +171,10 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
     }
 
     private void resetFonts() {
-        mFontDaohang.setTextColor(0xff272636);
-        mFontBook.setTextColor(0xff272636);
-        mFontTansuo.setTextColor(0xff272636);
-        mFontMe.setTextColor(0xff272636);
+        mFontDaohang.setTextColor(fontColorUnSelect);
+        mFontBook.setTextColor(fontColorUnSelect);
+        mFontTansuo.setTextColor(fontColorUnSelect);
+        mFontMe.setTextColor(fontColorUnSelect);
     }
 
     private void resetImgs() {
