@@ -1,16 +1,21 @@
 package com.example.horacechan.parking;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Point;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,14 +26,22 @@ import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.BaiduMap.OnMapClickListener;
+import com.baidu.mapapi.map.BaiduMap.OnMarkerClickListener;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
+import com.baidu.mapapi.map.InfoWindow;
+import com.baidu.mapapi.map.InfoWindow.OnInfoWindowClickListener;
+import com.baidu.mapapi.map.MapPoi;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.Marker;
+import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationConfiguration.LocationMode;
 import com.baidu.mapapi.map.MyLocationData;
+import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
 
 
@@ -47,7 +60,7 @@ public class ParkingFrgment extends Fragment {
 	//定位的监听器
 	public MyLocationListener mMyLocationListener;
 	//当前定位的模式
-	private LocationMode mCurrentMode = LocationMode.COMPASS;
+	private LocationMode mCurrentMode = LocationMode.NORMAL;
 	//是否是第一次定位
 	private volatile boolean isFristLocation = true;
 	//地图控件
@@ -64,10 +77,14 @@ public class ParkingFrgment extends Fragment {
 	//方向传感器X方向的值
 	private int mXDirection;
 
+	//覆盖物相关
+	private  BitmapDescriptor mIconMarker;
+	//覆盖物详细信息的布局
+	private RelativeLayout mMarkerInfoLy;
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 //		mBMapMan=new BMapManager(getActivity().getApplication());
 //
 //		mBMapMan.init("3OGgTnIbjaRo9qiCDcKejjbQjOu9dXzQ", null);
@@ -108,6 +125,8 @@ public class ParkingFrgment extends Fragment {
 		mapView = (MapView)view.findViewById(R.id.map_view);
 		//获得地图实例
 		mBaiduMap = mapView.getMap();
+		mIconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.maker);
+		mMarkerInfoLy = (RelativeLayout)view.findViewById(R.id.id_marker_info);
 		MapStatusUpdate msu = MapStatusUpdateFactory.zoomTo(15.0f);
 		mBaiduMap.setMapStatus(msu);
 		//初始化定位
@@ -115,7 +134,185 @@ public class ParkingFrgment extends Fragment {
 		//初始化传感器
 		initOritationListener();
 
+		//initMarkerClickEvent();
+		mBaiduMap.setOnMarkerClickListener(new OnMarkerClickListener() {
+			@Override
+			public boolean onMarkerClick(final Marker marker) {
+				// 获得marker中的数据
+				Bundle extraInfo = marker.getExtraInfo();
+				ParkingInfo info = (ParkingInfo) extraInfo.getSerializable("info");
+				ImageView iv = (ImageView) mMarkerInfoLy
+						.findViewById(R.id.info_img);
+				TextView distance = (TextView) mMarkerInfoLy
+						.findViewById(R.id.info_distance);
+				TextView name = (TextView) mMarkerInfoLy
+						.findViewById(R.id.info_name);
+				TextView zan = (TextView) mMarkerInfoLy
+						.findViewById(R.id.info_zan);
+				iv.setImageResource(info.getImgId());
+				distance.setText(info.getDistance());
+				name.setText(info.getName());
+				zan.setText(info.getZan() + "");
+
+				InfoWindow infoWindow;
+				TextView tv = new TextView(getActivity().getBaseContext());
+				tv.setBackgroundResource(R.mipmap.location_tips);
+				tv.setPadding(30, 20, 30, 50);
+				tv.setText(info.getName());
+				tv.setTextColor(Color.parseColor("#ffffff"));
+				BitmapDescriptor lobd = BitmapDescriptorFactory.fromView(tv);
+				final LatLng latLng = marker.getPosition();
+				Point p = mBaiduMap.getProjection().toScreenLocation(latLng);
+				p.y -= 47;
+				LatLng ll = mBaiduMap.getProjection().fromScreenLocation(p);
+
+				infoWindow = new InfoWindow(lobd, ll, 0,
+						new OnInfoWindowClickListener()
+						{
+							@Override
+							public void onInfoWindowClick()
+							{
+								mBaiduMap.hideInfoWindow();
+							}
+						});
+
+				Log.e("TTTTT", "onMarkerClick: TTTTTT" );
+				mBaiduMap.showInfoWindow(infoWindow);
+				mMarkerInfoLy.setVisibility(View.VISIBLE);
+				return true;
+			}
+		});
+		initMapClickEvent();
+
+		addInfosOverlay(ParkingInfo.infos);
+
 		return view;
+	}
+
+	private void initMapClickEvent()
+	{
+		mBaiduMap.setOnMapClickListener(new BaiduMap.OnMapClickListener()
+		{
+
+			@Override
+			public boolean onMapPoiClick(MapPoi arg0)
+			{
+				return false;
+			}
+
+			@Override
+			public void onMapClick(LatLng arg0)
+			{
+				mMarkerInfoLy.setVisibility(View.GONE);
+				mBaiduMap.hideInfoWindow();
+
+			}
+		});
+	}
+
+//	private void initMarkerClickEvent() {
+//		// 对Marker的点击
+//		mBaiduMap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener() {
+//			@Override
+//			public boolean onMarkerClick(final Marker marker) {
+//				// 获得marker中的数据
+//				Bundle extraInfo = marker.getExtraInfo();
+//				ParkingInfo info = (ParkingInfo) extraInfo.getSerializable("info");
+//				ImageView iv = (ImageView) mMarkerInfoLy
+//						.findViewById(R.id.info_img);
+//				TextView distance = (TextView) mMarkerInfoLy
+//						.findViewById(R.id.info_distance);
+//				TextView name = (TextView) mMarkerInfoLy
+//						.findViewById(R.id.info_name);
+//				TextView zan = (TextView) mMarkerInfoLy
+//						.findViewById(R.id.info_zan);
+//				iv.setImageResource(info.getImgId());
+//				distance.setText(info.getDistance());
+//				name.setText(info.getName());
+//				zan.setText(info.getZan() + "");
+
+//				InfoWindow infoWindow;
+//				TextView tv = new TextView(getActivity());
+//				tv.setBackgroundResource(R.mipmap.location_tips);
+//				tv.setPadding(30, 20, 30, 50);
+//				tv.setText(info.getName());
+//				tv.setTextColor(Color.parseColor("#ffffff"));
+//				BitmapDescriptor lobd = BitmapDescriptorFactory.fromView(tv);
+//				final LatLng latLng = marker.getPosition();
+//				Point p = mBaiduMap.getProjection().toScreenLocation(latLng);
+//				p.y -= 47;
+//				LatLng ll = mBaiduMap.getProjection().fromScreenLocation(p);
+//
+//				infoWindow = new InfoWindow(lobd, ll, 0,
+//						new OnInfoWindowClickListener()
+//						{
+//							@Override
+//							public void onInfoWindowClick()
+//							{
+//								mBaiduMap.hideInfoWindow();
+//							}
+//						});
+				//mBaiduMap.showInfoWindow(infoWindow);
+//				Log.e("", "onMarkerClick: TTTTTT" );
+//				mMarkerInfoLy.setVisibility(View.VISIBLE);
+//				return true;
+//			}
+//		});
+//	}
+
+//	private class ViewHolder
+//	{
+//		ImageView infoImg;
+//		TextView infoName;
+//		TextView infoDistance;
+//		TextView infoZan;
+//	}
+
+//	protected void popupInfo(RelativeLayout mMarkerLy, ParkingInfo info)
+//	{
+//		ViewHolder viewHolder = null;
+//		if (mMarkerLy.getTag() == null)
+//		{
+//			viewHolder = new ViewHolder();
+//			viewHolder.infoImg = (ImageView) mMarkerLy
+//					.findViewById(R.id.info_img);
+//			viewHolder.infoName = (TextView) mMarkerLy
+//					.findViewById(R.id.info_name);
+//			viewHolder.infoDistance = (TextView) mMarkerLy
+//					.findViewById(R.id.info_distance);
+//			viewHolder.infoZan = (TextView) mMarkerLy
+//					.findViewById(R.id.info_zan);
+//
+//			mMarkerLy.setTag(viewHolder);
+//		}
+//		viewHolder = (ViewHolder) mMarkerLy.getTag();
+//		viewHolder.infoImg.setImageResource(info.getImgId());
+//		viewHolder.infoDistance.setText(info.getDistance());
+//		viewHolder.infoName.setText(info.getName());
+//		viewHolder.infoZan.setText(info.getZan() + "");
+//	}
+
+	public void addInfosOverlay(List<ParkingInfo> infos)
+	{
+		mBaiduMap.clear();
+		LatLng latLng = null;
+		OverlayOptions overlayOptions;
+		Marker marker;
+		for (ParkingInfo info : infos)
+		{
+			// 位置
+			latLng = new LatLng(info.getLatitude(), info.getLongitude());
+			// 图标
+			overlayOptions = new MarkerOptions().position(latLng)
+					.icon(mIconMarker).zIndex(5);
+			marker = (Marker) (mBaiduMap.addOverlay(overlayOptions));
+			Bundle bundle = new Bundle();
+			bundle.putSerializable("info", info);
+			marker.setExtraInfo(bundle);
+		}
+		// 将地图移到到最后一个经纬度位置
+		MapStatusUpdate u = MapStatusUpdateFactory.newLatLng(latLng);
+		mBaiduMap.setMapStatus(u);
 	}
 
 	private void initMyLocation() {
