@@ -49,6 +49,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.lang.Object;
+import java.util.Objects;
 
 public class ParkingFrgment extends Fragment implements LocationSource , AMapLocationListener , OnMarkerClickListener, AMap.OnInfoWindowClickListener, AMap.InfoWindowAdapter, AMap.OnMapTouchListener {
 
@@ -99,6 +101,8 @@ public class ParkingFrgment extends Fragment implements LocationSource , AMapLoc
 
 		markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.maker));
 
+		addOverlays(ParkingInfo.infos);
+
 		Marker marker = aMap.addMarker(markerOptions);
 
 		// 对amap添加单击地图事件监听器
@@ -113,6 +117,33 @@ public class ParkingFrgment extends Fragment implements LocationSource , AMapLoc
 		aMap.setInfoWindowAdapter(this);
 
 		return view;
+	}
+
+	private void addOverlays(List<ParkingInfo> infos) {
+		//批量添加覆盖物，组装addMarkers()
+		aMap.clear();
+		//ArrayList<MarkerOptions> markerOptionsArrayList = new ArrayList<MarkerOptions>();
+		//ArrayList<Marker> MarkerArrayList;
+		//boolean moverToCenter = false;
+		Marker marker = null;
+		//构造ArrayList<MarkerOptions>
+		for (final ParkingInfo info : infos){
+			LatLng latLng = new LatLng(info.getLatitude(), info.getLongitude());
+			MarkerOptions options = new MarkerOptions()
+					.position(latLng)
+					.icon(BitmapDescriptorFactory.fromResource(R.mipmap.maker))
+					.zIndex(5);
+			marker = aMap.addMarker(options);
+			//marker.setTitle(info.getName());
+			ParkingInfo MarkerObject = new ParkingInfo(info.getLatitude(), info.getLongitude(),info.getImgId(),info.getName(),info.getDistance(),info.getZan());
+			Object mmm = new Object(){
+				int i = info.getImgId();
+				String a = info.getName();
+			};
+
+			marker.setObject(mmm);
+		}
+		//MarkerArrayList = aMap.addMarkers(markerOptionsArrayList, moverToCenter);
 	}
 
 	private void initWeight(View view) {
@@ -138,17 +169,19 @@ public class ParkingFrgment extends Fragment implements LocationSource , AMapLoc
 
 	}
 
-
+	//摸到地图触发的事件
 	@Override
 	public void onTouch(MotionEvent motionEvent) {
 		mMarkerInfoLy.setVisibility(View.GONE);
 	}
 
+	//点击地图触发的事件
 //	@Override
 //	public void onMapClick(LatLng latLng) {
 //		mMarkerInfoLy.setVisibility(View.GONE);
 //	}
 
+	//点击覆盖物触发的事件
 	@Override
 	public boolean onMarkerClick(final Marker marker) {
 
@@ -157,9 +190,15 @@ public class ParkingFrgment extends Fragment implements LocationSource , AMapLoc
 //				jumpPoint(marker);
 //			}
 //		}
+		//Object parkingMarker = marker.getObject();
+		//mMarkerInfoName.setText(parkingMarker.getClass().);
+		//mMarkerInfoDis.setText(marker.getObject().getClass());
+		Log.d("FFFFF", String.valueOf(marker.getObject()));
+		//Toast.makeText(getActivity(),marker.getObject(),Toast.LENGTH_SHORT);
+		mMarkerInfoImg.setImageResource(R.mipmap.a04);
 		mMarkerInfoLy.setVisibility(View.VISIBLE);
 
-		//markerText.setText("你点击的是" + marker.getTitle());
+
 		return false;
 
 	}
