@@ -1,441 +1,232 @@
 package com.example.horacechan.parking;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
+import android.os.SystemClock;
+import android.provider.SyncStateContract;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.Interpolator;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
-import com.baidu.location.BDLocation;
-import com.baidu.location.BDLocationListener;
-import com.baidu.location.LocationClient;
-import com.baidu.location.LocationClientOption;
-import com.baidu.mapapi.SDKInitializer;
-import com.baidu.mapapi.map.BaiduMap;
-import com.baidu.mapapi.map.BaiduMap.OnMapClickListener;
-import com.baidu.mapapi.map.BaiduMap.OnMarkerClickListener;
-import com.baidu.mapapi.map.BitmapDescriptor;
-import com.baidu.mapapi.map.BitmapDescriptorFactory;
-import com.baidu.mapapi.map.InfoWindow;
-import com.baidu.mapapi.map.InfoWindow.OnInfoWindowClickListener;
-import com.baidu.mapapi.map.MapPoi;
-import com.baidu.mapapi.map.MapStatusUpdate;
-import com.baidu.mapapi.map.MapStatusUpdateFactory;
-import com.baidu.mapapi.map.MapView;
-import com.baidu.mapapi.map.Marker;
-import com.baidu.mapapi.map.MarkerOptions;
-import com.baidu.mapapi.map.MyLocationConfiguration;
-import com.baidu.mapapi.map.MyLocationConfiguration.LocationMode;
-import com.baidu.mapapi.map.MyLocationData;
-import com.baidu.mapapi.map.OverlayOptions;
-import com.baidu.mapapi.model.LatLng;
+import com.amap.api.location.AMapLocation;
+import com.amap.api.location.AMapLocationClient;
+import com.amap.api.location.AMapLocationClientOption;
+import com.amap.api.location.AMapLocationClientOption.AMapLocationMode;
+import com.amap.api.location.AMapLocationListener;
+import com.amap.api.maps.AMap;
+import com.amap.api.maps.AMap.OnMarkerClickListener;
+import com.amap.api.maps.LocationSource;
+import com.amap.api.maps.MapView;
+import com.amap.api.maps.Projection;
+import com.amap.api.maps.model.BitmapDescriptorFactory;
+import com.amap.api.maps.model.LatLng;
+import com.amap.api.maps.model.Marker;
+import com.amap.api.maps.model.MarkerOptions;
+import com.amap.api.maps.model.MyLocationStyle;
 
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
-public class ParkingFrgment extends Fragment {
+public class ParkingFrgment extends Fragment implements LocationSource , AMapLocationListener , OnMarkerClickListener, AMap.OnInfoWindowClickListener, AMap.InfoWindowAdapter, AMap.OnMapTouchListener {
 
-	//private WebView webView;
+	private OnLocationChangedListener mListener;
+	private AMapLocationClient mlocationClient;
+	private AMapLocationClientOption mLocationOption;
 
-//	private TextView positionTextView;
-//	private LocationManager locationManager;
-//	private String provider;
-
-	//定位的客户端
-	private LocationClient mLocationClient;
-	//定位的监听器
-	public MyLocationListener mMyLocationListener;
-	//当前定位的模式
-	private LocationMode mCurrentMode = LocationMode.NORMAL;
-	//是否是第一次定位
-	private volatile boolean isFristLocation = true;
-	//地图控件
 	private MapView mapView;
 	//地图实例
-	private BaiduMap mBaiduMap;
-	//经纬度
-	private double mCurrentLantitude;
-	private double mCurrentLongitude;
-	//当前精度
-	private float mCurrentAccracy;
-	//方向传感器的监听器
-	private MyOrientationListener myOrientationListener;
-	//方向传感器X方向的值
-	private int mXDirection;
+	private AMap aMap;
 
 	//覆盖物相关
-	private  BitmapDescriptor mIconMarker;
+	private Marker marker2;
 	//覆盖物详细信息的布局
 	private RelativeLayout mMarkerInfoLy;
+	private ImageView mMarkerInfoImg;
+	private ImageView mMarkerZanImg;
+	private TextView mMarkerZanNum;
+	private TextView mMarkerInfoName;
+	private TextView mMarkerInfoDis;
+
+
+	private ImageButton goToDestBtn;
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-//		mBMapMan=new BMapManager(getActivity().getApplication());
-//
-//		mBMapMan.init("3OGgTnIbjaRo9qiCDcKejjbQjOu9dXzQ", null);
-		SDKInitializer.initialize(getActivity().getApplicationContext());
+	public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
 		View view = inflater.inflate(R.layout.tab_daohang, container, false);
 
-		//内置浏览器应用
-//		webView = (WebView)view.findViewById(R.id.web_view);
-//
-//		webView.getSettings().setJavaScriptEnabled(true);
-//		webView.setWebViewClient(new WebViewClient());
-//		webView.loadUrl("http://www.baidu.com");
-
-
-		//定位功能
-//		positionTextView = (TextView)view.findViewById(R.id.position_text);
-//		locationManager = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
-//		//获取所有可用的位置提供器
-//		List<String> providerList = locationManager.getProviders(true);
-//		if (providerList.contains(LocationManager.GPS_PROVIDER)){
-//			provider = LocationManager.GPS_PROVIDER;
-//		}else if (providerList.contains(LocationManager.NETWORK_PROVIDER)){
-//			provider = locationManager.NETWORK_PROVIDER;
-//		}else {
-//			//当前没有可用的位置提供器时，弹出Toast提醒
-//			Toast.makeText(this.getActivity(),"No location provider to use",Toast.LENGTH_SHORT).show();
-//		}
-//		Location location = locationManager.getLastKnownLocation(provider);
-//		if (location!=null){
-//			showLocation(location);
-//
-//		}
-//
-//		locationManager.requestLocationUpdates(provider,5000,1,locationListener);
-//
-		isFristLocation = true;
-
-		mapView = (MapView)view.findViewById(R.id.map_view);
+		//初始化页面内控件
+		initWeight(view);
 		//获得地图实例
-		mBaiduMap = mapView.getMap();
-		mIconMarker = BitmapDescriptorFactory.fromResource(R.mipmap.maker);
-		mMarkerInfoLy = (RelativeLayout)view.findViewById(R.id.id_marker_info);
-		MapStatusUpdate msu = MapStatusUpdateFactory.zoomTo(15.0f);
-		mBaiduMap.setMapStatus(msu);
-		//初始化定位
-		initMyLocation();
-		//初始化传感器
-		initOritationListener();
+		mapView.onCreate(savedInstanceState);
+		if (aMap == null){
+			aMap = mapView.getMap();
+		}
+		//图层显示模式
+		aMap.setMapType(AMap.MAP_TYPE_NAVI);
+		//交通路况图层显示
+		aMap.setTrafficEnabled(true);
 
-		//initMarkerClickEvent();
-		mBaiduMap.setOnMarkerClickListener(new OnMarkerClickListener() {
-			@Override
-			public boolean onMarkerClick(final Marker marker) {
-				// 获得marker中的数据
-				Bundle extraInfo = marker.getExtraInfo();
-				ParkingInfo info = (ParkingInfo) extraInfo.getSerializable("info");
-				ImageView iv = (ImageView) mMarkerInfoLy
-						.findViewById(R.id.info_img);
-				TextView distance = (TextView) mMarkerInfoLy
-						.findViewById(R.id.info_distance);
-				TextView name = (TextView) mMarkerInfoLy
-						.findViewById(R.id.info_name);
-				TextView zan = (TextView) mMarkerInfoLy
-						.findViewById(R.id.info_zan);
-				iv.setImageResource(info.getImgId());
-				distance.setText(info.getDistance());
-				name.setText(info.getName());
-				zan.setText(info.getZan() + "");
+		//初始化定位服务
+		initLocation();
 
-				InfoWindow infoWindow;
-				TextView tv = new TextView(getActivity().getBaseContext());
-				tv.setBackgroundResource(R.mipmap.location_tips);
-				tv.setPadding(30, 20, 30, 50);
-				tv.setText(info.getName());
-				tv.setTextColor(Color.parseColor("#ffffff"));
-				BitmapDescriptor lobd = BitmapDescriptorFactory.fromView(tv);
-				final LatLng latLng = marker.getPosition();
-				Point p = mBaiduMap.getProjection().toScreenLocation(latLng);
-				p.y -= 47;
-				LatLng ll = mBaiduMap.getProjection().fromScreenLocation(p);
+		MarkerOptions markerOptions = new MarkerOptions();
 
-				infoWindow = new InfoWindow(lobd, ll, 0,
-						new OnInfoWindowClickListener()
-						{
-							@Override
-							public void onInfoWindowClick()
-							{
-								mBaiduMap.hideInfoWindow();
-							}
-						});
+		markerOptions.position(new LatLng(23.0446140612, 113.3950857036));
 
-				Log.e("TTTTT", "onMarkerClick: TTTTTT" );
-				mBaiduMap.showInfoWindow(infoWindow);
-				mMarkerInfoLy.setVisibility(View.VISIBLE);
-				return true;
-			}
-		});
-		initMapClickEvent();
+		markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.maker));
 
-		addInfosOverlay(ParkingInfo.infos);
+		Marker marker = aMap.addMarker(markerOptions);
+
+		// 对amap添加单击地图事件监听器
+		//aMap.setOnMapClickListener(this);
+		// 对amap添加触摸地图事件监听器
+		aMap.setOnMapTouchListener(this);
+		// 设置点击marker事件监听器
+		aMap.setOnMarkerClickListener(this);
+		// 设置点击infoWindow事件监听器
+		aMap.setOnInfoWindowClickListener(this);
+		// 设置自定义InfoWindow样式
+		aMap.setInfoWindowAdapter(this);
 
 		return view;
 	}
 
-	private void initMapClickEvent()
-	{
-		mBaiduMap.setOnMapClickListener(new BaiduMap.OnMapClickListener()
-		{
-
+	private void initWeight(View view) {
+		//地图控件
+		mapView = (MapView)view.findViewById(R.id.map_view);
+		//常规控件
+		mMarkerInfoLy = (RelativeLayout) view.findViewById(R.id.id_marker_info);
+		mMarkerInfoImg = (ImageView) view.findViewById(R.id.info_img);
+		mMarkerZanImg = (ImageView) view.findViewById(R.id.zan_img);
+		mMarkerZanNum = (TextView) view.findViewById(R.id.info_zan_num);
+		mMarkerInfoName = (TextView) view.findViewById(R.id.info_name);
+		mMarkerInfoDis = (TextView) view.findViewById(R.id.info_distance);
+		//初始化导航按钮
+		goToDestBtn = (ImageButton)view.findViewById(R.id.goToDestination);
+		goToDestBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
-			public boolean onMapPoiClick(MapPoi arg0)
-			{
-				return false;
-			}
-
-			@Override
-			public void onMapClick(LatLng arg0)
-			{
-				mMarkerInfoLy.setVisibility(View.GONE);
-				mBaiduMap.hideInfoWindow();
-
+			public void onClick(View view) {
+				Log.d("DDD", "DDDD");
 			}
 		});
+
+
+
 	}
 
-//	private void initMarkerClickEvent() {
-//		// 对Marker的点击
-//		mBaiduMap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener() {
-//			@Override
-//			public boolean onMarkerClick(final Marker marker) {
-//				// 获得marker中的数据
-//				Bundle extraInfo = marker.getExtraInfo();
-//				ParkingInfo info = (ParkingInfo) extraInfo.getSerializable("info");
-//				ImageView iv = (ImageView) mMarkerInfoLy
-//						.findViewById(R.id.info_img);
-//				TextView distance = (TextView) mMarkerInfoLy
-//						.findViewById(R.id.info_distance);
-//				TextView name = (TextView) mMarkerInfoLy
-//						.findViewById(R.id.info_name);
-//				TextView zan = (TextView) mMarkerInfoLy
-//						.findViewById(R.id.info_zan);
-//				iv.setImageResource(info.getImgId());
-//				distance.setText(info.getDistance());
-//				name.setText(info.getName());
-//				zan.setText(info.getZan() + "");
 
-//				InfoWindow infoWindow;
-//				TextView tv = new TextView(getActivity());
-//				tv.setBackgroundResource(R.mipmap.location_tips);
-//				tv.setPadding(30, 20, 30, 50);
-//				tv.setText(info.getName());
-//				tv.setTextColor(Color.parseColor("#ffffff"));
-//				BitmapDescriptor lobd = BitmapDescriptorFactory.fromView(tv);
-//				final LatLng latLng = marker.getPosition();
-//				Point p = mBaiduMap.getProjection().toScreenLocation(latLng);
-//				p.y -= 47;
-//				LatLng ll = mBaiduMap.getProjection().fromScreenLocation(p);
+	@Override
+	public void onTouch(MotionEvent motionEvent) {
+		mMarkerInfoLy.setVisibility(View.GONE);
+	}
+
+//	@Override
+//	public void onMapClick(LatLng latLng) {
+//		mMarkerInfoLy.setVisibility(View.GONE);
+//	}
+
+	@Override
+	public boolean onMarkerClick(final Marker marker) {
+
+//		if (marker.equals(marker2)) {
+//			if (aMap != null) {
+//				jumpPoint(marker);
+//			}
+//		}
+		mMarkerInfoLy.setVisibility(View.VISIBLE);
+
+		//markerText.setText("你点击的是" + marker.getTitle());
+		return false;
+
+	}
+
+//	public void jumpPoint(final Marker marker) {
+//		final Handler handler = new Handler();
+//		final long start = SystemClock.uptimeMillis();
+//		Projection proj = aMap.getProjection();
+//		Point startPoint = proj.toScreenLocation(Constants.XIAN);
+//		startPoint.offset(0, -100);
+//		final LatLng startLatLng = proj.fromScreenLocation(startPoint);
+//		final long duration = 1500;
 //
-//				infoWindow = new InfoWindow(lobd, ll, 0,
-//						new OnInfoWindowClickListener()
-//						{
-//							@Override
-//							public void onInfoWindowClick()
-//							{
-//								mBaiduMap.hideInfoWindow();
-//							}
-//						});
-				//mBaiduMap.showInfoWindow(infoWindow);
-//				Log.e("", "onMarkerClick: TTTTTT" );
-//				mMarkerInfoLy.setVisibility(View.VISIBLE);
-//				return true;
+//		final Interpolator interpolator = new BounceInterpolator();
+//		handler.post(new Runnable() {
+//			@Override
+//			public void run() {
+//				long elapsed = SystemClock.uptimeMillis() - start;
+//				float t = interpolator.getInterpolation((float) elapsed
+//						/ duration);
+//				double lng = t * Constants.XIAN.longitude + (1 - t)
+//						* startLatLng.longitude;
+//				double lat = t * Constants.XIAN.latitude + (1 - t)
+//						* startLatLng.latitude;
+//				marker.setPosition(new LatLng(lat, lng));
+//				aMap.();// 刷新地图
+//				if (t < 1.0) {
+//					handler.postDelayed(this, 16);
+//				}
 //			}
 //		});
-//	}
-
-//	private class ViewHolder
-//	{
-//		ImageView infoImg;
-//		TextView infoName;
-//		TextView infoDistance;
-//		TextView infoZan;
-//	}
-
-//	protected void popupInfo(RelativeLayout mMarkerLy, ParkingInfo info)
-//	{
-//		ViewHolder viewHolder = null;
-//		if (mMarkerLy.getTag() == null)
-//		{
-//			viewHolder = new ViewHolder();
-//			viewHolder.infoImg = (ImageView) mMarkerLy
-//					.findViewById(R.id.info_img);
-//			viewHolder.infoName = (TextView) mMarkerLy
-//					.findViewById(R.id.info_name);
-//			viewHolder.infoDistance = (TextView) mMarkerLy
-//					.findViewById(R.id.info_distance);
-//			viewHolder.infoZan = (TextView) mMarkerLy
-//					.findViewById(R.id.info_zan);
 //
-//			mMarkerLy.setTag(viewHolder);
-//		}
-//		viewHolder = (ViewHolder) mMarkerLy.getTag();
-//		viewHolder.infoImg.setImageResource(info.getImgId());
-//		viewHolder.infoDistance.setText(info.getDistance());
-//		viewHolder.infoName.setText(info.getName());
-//		viewHolder.infoZan.setText(info.getZan() + "");
 //	}
 
-	public void addInfosOverlay(List<ParkingInfo> infos)
-	{
-		mBaiduMap.clear();
-		LatLng latLng = null;
-		OverlayOptions overlayOptions;
-		Marker marker;
-		for (ParkingInfo info : infos)
-		{
-			// 位置
-			latLng = new LatLng(info.getLatitude(), info.getLongitude());
-			// 图标
-			overlayOptions = new MarkerOptions().position(latLng)
-					.icon(mIconMarker).zIndex(5);
-			marker = (Marker) (mBaiduMap.addOverlay(overlayOptions));
-			Bundle bundle = new Bundle();
-			bundle.putSerializable("info", info);
-			marker.setExtraInfo(bundle);
-		}
-		// 将地图移到到最后一个经纬度位置
-		MapStatusUpdate u = MapStatusUpdateFactory.newLatLng(latLng);
-		mBaiduMap.setMapStatus(u);
-	}
-
-	private void initMyLocation() {
-		// 定位初始化
-		mLocationClient = new LocationClient(getActivity());
-		mMyLocationListener = new MyLocationListener();
-		mLocationClient.registerLocationListener(mMyLocationListener);
-		// 设置定位的相关配置
-		LocationClientOption option = new LocationClientOption();
-		option.setOpenGps(true);// 打开gps
-		option.setCoorType("bd09ll"); // 设置坐标类型
-		option.setScanSpan(1000);
-		mLocationClient.setLocOption(option);
-		mBaiduMap.setTrafficEnabled(true);//开启实时交通
-	}
-
-	private void initOritationListener(){
-		myOrientationListener = new MyOrientationListener(
-				getActivity().getApplicationContext());
-		myOrientationListener
-				.setOnOrientationListener(new MyOrientationListener.OnOrientationListener()
-				{
-					@Override
-					public void onOrientationChanged(float x)
-					{
-						mXDirection = (int) x;
-
-						// 构造定位数据
-						MyLocationData locData = new MyLocationData.Builder()
-								.accuracy(mCurrentAccracy)
-										// 此处设置开发者获取到的方向信息，顺时针0-360
-								.direction(mXDirection)
-								.latitude(mCurrentLantitude)
-								.longitude(mCurrentLongitude).build();
-						// 设置定位数据
-						mBaiduMap.setMyLocationData(locData);
-						// 设置自定义图标
-						BitmapDescriptor mCurrentMarker = BitmapDescriptorFactory
-								.fromResource(R.mipmap.navi_map_gps_locked);
-						MyLocationConfiguration config = new MyLocationConfiguration(
-								mCurrentMode, true, mCurrentMarker);
-						mBaiduMap.setMyLocationConfigeration(config);
-
-					}
-				});
-	}
-
-	public class MyLocationListener implements BDLocationListener
-	{
-		@Override
-		public void onReceiveLocation(BDLocation location)
-		{
-
-			// map view 销毁后不在处理新接收的位置
-			if (location == null || mapView == null)
-				return;
-			// 构造定位数据
-			MyLocationData locData = new MyLocationData.Builder()
-					.accuracy(location.getRadius())
-							// 此处设置开发者获取到的方向信息，顺时针0-360
-					.direction(mXDirection).latitude(location.getLatitude())
-					.longitude(location.getLongitude()).build();
-			mCurrentAccracy = location.getRadius();
-			// 设置定位数据
-			mBaiduMap.setMyLocationData(locData);
-			mCurrentLantitude = location.getLatitude();
-			mCurrentLongitude = location.getLongitude();
-			// 设置自定义图标
-			BitmapDescriptor mCurrentMarker = BitmapDescriptorFactory
-					.fromResource(R.mipmap.navi_map_gps_locked);
-			MyLocationConfiguration config = new MyLocationConfiguration(
-					mCurrentMode, true, mCurrentMarker);
-			mBaiduMap.setMyLocationConfigeration(config);
-			// 第一次定位时，将地图位置移动到当前位置
-			if (isFristLocation)
-			{
-				isFristLocation = false;
-				LatLng ll = new LatLng(location.getLatitude(),
-						location.getLongitude());
-				MapStatusUpdate u = MapStatusUpdateFactory.newLatLng(ll);
-				mBaiduMap.animateMapStatus(u);
-			}
-		}
+	@Override
+	public void onInfoWindowClick(Marker marker) {
 
 	}
 
 	@Override
-	public void onStart()
-	{
-		// 开启图层定位
-		mBaiduMap.setMyLocationEnabled(true);
-		if (!mLocationClient.isStarted())
-		{
-			mLocationClient.start();
-		}
-		// 开启方向传感器
-		myOrientationListener.start();
-		super.onStart();
+	public View getInfoWindow(Marker marker) {
+		return null;
 	}
 
 	@Override
-	public void onStop()
-	{
-		// 关闭图层定位
-		mBaiduMap.setMyLocationEnabled(false);
-		mLocationClient.stop();
-
-		// 关闭方向传感器
-		myOrientationListener.stop();
-		super.onStop();
+	public View getInfoContents(Marker marker) {
+		return null;
 	}
 
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		mapView.onDestroy();
-		mapView = null;
-	}
-
-	@Override
-	public void onPause() {
-		super.onPause();
-		mapView.onPause();
+	private void initLocation() {
+		// 自定义系统定位小蓝点
+		MyLocationStyle myLocationStyle = new MyLocationStyle();
+		// 设置小蓝点的图标
+		myLocationStyle.myLocationIcon(BitmapDescriptorFactory
+				.fromResource(R.mipmap.navi_map_gps_locked));
+		// 设置圆形的边框颜色
+		myLocationStyle.strokeColor(Color.BLACK);
+		// 设置圆形的填充颜色
+		myLocationStyle.radiusFillColor(Color.argb(100, 0, 0, 180));
+		// myLocationStyle.anchor(int,int)//设置小蓝点的锚点
+		// 设置圆形的边框粗细
+		myLocationStyle.strokeWidth(1.0f);
+		aMap.setMyLocationStyle(myLocationStyle);
+		aMap.setLocationSource(this);// 设置定位监听
+		aMap.getUiSettings().setMyLocationButtonEnabled(true);// 设置默认定位按钮是否显示
+		aMap.setMyLocationEnabled(true);// 设置为true表示显示定位层并可触发定位，false表示隐藏定位层并不可触发定位，默认是false
+		// aMap.setMyLocationType()
 	}
 
 	@Override
@@ -444,40 +235,69 @@ public class ParkingFrgment extends Fragment {
 		mapView.onResume();
 	}
 
-	//
-//	protected void onDestory(){
-//		super.onDestroy();
-//		if(locationManager != null){
-//			locationManager.removeUpdates(locationListener);
-//		}
-//	}
-//
-//	LocationListener locationListener = new LocationListener() {
-//		@Override
-//		public void onLocationChanged(Location location) {
-//			showLocation(location);
-//		}
-//
-//		@Override
-//		public void onStatusChanged(String s, int i, Bundle bundle) {
-//
-//		}
-//
-//		@Override
-//		public void onProviderEnabled(String s) {
-//
-//		}
-//
-//		@Override
-//		public void onProviderDisabled(String s) {
-//
-//		}
-//	};
-//
-//	private void showLocation(Location location) {
-//		String currentPostion = "latitude is" + location.getLatitude() + "/n" + "longitude is " + location.getLongitude();
-//
-//		positionTextView.setText(currentPostion);
-//
-//	}
+	@Override
+	public void onPause() {
+		super.onPause();
+		mapView.onPause();
+		deactivate();
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		mapView.onSaveInstanceState(outState);
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		mapView.onDestroy();
+	}
+
+	 //定位成功后回调函数
+	@Override
+	public void onLocationChanged(AMapLocation amapLocation) {
+		if (mListener != null && amapLocation != null) {
+			if (amapLocation != null
+					&& amapLocation.getErrorCode() == 0) {
+				mListener.onLocationChanged(amapLocation);// 显示系统小蓝点
+			} else {
+				String errText = "定位失败," + amapLocation.getErrorCode()+ ": " + amapLocation.getErrorInfo();
+				Log.e("AmapErr",errText);
+			}
+		}
+	}
+
+	//激活定位
+	@Override
+	public void activate(OnLocationChangedListener listener) {
+		mListener = listener;
+		if (mlocationClient == null) {
+			mlocationClient = new AMapLocationClient(getActivity());
+			mLocationOption = new AMapLocationClientOption();
+			//设置定位监听
+			mlocationClient.setLocationListener(this);
+			//设置为高精度定位模式
+			mLocationOption.setLocationMode(AMapLocationMode.Hight_Accuracy);
+			//设置定位参数
+			mlocationClient.setLocationOption(mLocationOption);
+			// 此方法为每隔固定时间会发起一次定位请求，为了减少电量消耗或网络流量消耗，
+			// 注意设置合适的定位时间的间隔（最小间隔支持为2000ms），并且在合适时间调用stopLocation()方法来取消定位请求
+			// 在定位结束后，在合适的生命周期调用onDestroy()方法
+			// 在单次定位情况下，定位无论成功与否，都无需调用stopLocation()方法移除请求，定位sdk内部会移除
+			mlocationClient.startLocation();
+		}
+	}
+
+	//停止定位
+	@Override
+	public void deactivate() {
+		mListener = null;
+		if (mlocationClient != null) {
+			mlocationClient.stopLocation();
+			mlocationClient.onDestroy();
+		}
+		mlocationClient = null;
+	}
+
 }

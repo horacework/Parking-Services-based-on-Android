@@ -24,4 +24,9 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile files('libs/BaiduLBS_Android.jar')
+    compile files('libs/BaiduNaviSDK_3.1.1.jar')
+    compile files('libs/locSDK_6.23.jar')
+    compile files('libs/AMap_2DMap_V2.8.1_20160202.jar')
+    compile files('libs/AMap_Navi_v1.7.0.2_20160315.jar')
+    compile files('libs/AMap_3DMap_V3.3.0_20160331.jar')
 }

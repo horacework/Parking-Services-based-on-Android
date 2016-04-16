@@ -19,7 +19,8 @@
         <!--android:layout_height="match_parent">-->
     <!--</WebView>-->
 
-    <com.baidu.mapapi.map.MapView
+    <com.amap.api.maps.MapView
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/map_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -27,7 +28,7 @@
 
     <RelativeLayout
         android:id="@+id/id_marker_info"
-        android:visibility="gone"
+
         android:layout_width="fill_parent"
         android:layout_height="220dp"
         android:layout_alignParentBottom="true"
@@ -48,6 +49,31 @@
             android:scaleType="fitXY"
             android:src="@mipmap/a04" />
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="12dp"
+            android:background="#CC4e5a6b"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:id="@+id/zan_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="zan"
+                android:src="@mipmap/map_zan" />
+
+            <TextView
+                android:id="@+id/info_zan_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="652"
+                android:textColor="#FFF5EB" />
+        </LinearLayout>
+
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="50dp"
@@ -55,7 +81,7 @@
             android:background="@mipmap/bg_map_bottom" >
 
             <LinearLayout
-                android:layout_width="fill_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="20dp"
@@ -76,29 +102,17 @@
                     android:textColor="#FFF5EB" />
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
+            <ImageButton
+                android:id="@+id/goToDestination"
+                android:layout_width="60dp"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="20dp"
-                android:orientation="horizontal" >
+                android:background="#FF1D89E4"
+                android:src="@mipmap/goto_icon"
+                android:scaleType="fitCenter"
+                android:layout_alignParentRight="true"/>
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:onClick="zan"
-                    android:src="@mipmap/map_zan" />
-
-                <TextView
-                    android:id="@+id/info_zan"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="652"
-                    android:textColor="#FFF5EB" />
-            </LinearLayout>
         </RelativeLayout>
+
     </RelativeLayout>
 
 </RelativeLayout>
