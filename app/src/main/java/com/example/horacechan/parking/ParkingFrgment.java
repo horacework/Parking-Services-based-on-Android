@@ -1,32 +1,18 @@
 package com.example.horacechan.parking;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Point;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
-import android.os.SystemClock;
-import android.provider.SyncStateContract;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.BounceInterpolator;
-import android.view.animation.Interpolator;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
@@ -37,30 +23,27 @@ import com.amap.api.maps.AMap;
 import com.amap.api.maps.AMap.OnMarkerClickListener;
 import com.amap.api.maps.LocationSource;
 import com.amap.api.maps.MapView;
-import com.amap.api.maps.Projection;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
 
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.lang.Object;
-import java.util.Objects;
 
 public class ParkingFrgment extends Fragment implements LocationSource , AMapLocationListener , OnMarkerClickListener, AMap.OnInfoWindowClickListener, AMap.InfoWindowAdapter, AMap.OnMapTouchListener {
 
 	private OnLocationChangedListener mListener;
 	private AMapLocationClient mlocationClient;
-	private AMapLocationClientOption mLocationOption;
 
 	private MapView mapView;
 	//地图实例
 	private AMap aMap;
+
+	//定位方向
+
+	private double currentLatitude;
+	private double currentLongitude;
 
 	//覆盖物相关
 	private Marker marker2;
@@ -95,6 +78,8 @@ public class ParkingFrgment extends Fragment implements LocationSource , AMapLoc
 		//初始化定位服务
 		initLocation();
 
+
+
 		MarkerOptions markerOptions = new MarkerOptions();
 
 		markerOptions.position(new LatLng(23.0446140612, 113.3950857036));
@@ -104,6 +89,7 @@ public class ParkingFrgment extends Fragment implements LocationSource , AMapLoc
 		addOverlays(ParkingInfo.infos);
 
 		Marker marker = aMap.addMarker(markerOptions);
+
 
 		// 对amap添加单击地图事件监听器
 		//aMap.setOnMapClickListener(this);
@@ -162,11 +148,27 @@ public class ParkingFrgment extends Fragment implements LocationSource , AMapLoc
 			@Override
 			public void onClick(View view) {
 				Log.d("DDD", "DDDD");
+				Intent intent = new Intent(getActivity(),NaviActivity.class);
+				intent.putExtra("Latitude",currentLatitude);
+				intent.putExtra("Longitude",currentLongitude);
+				startActivityForResult(intent,1);
 			}
 		});
 
 
 
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch (requestCode){
+			case 1:
+				if (resultCode == 1){
+					Log.d("导航完成","做点什么");
+				}else {
+					Log.d("导航停止返回","doSomething");
+				}
+		}
 	}
 
 	//摸到地图触发的事件
@@ -195,7 +197,7 @@ public class ParkingFrgment extends Fragment implements LocationSource , AMapLoc
 		//mMarkerInfoDis.setText(marker.getObject().getClass());
 		Log.d("FFFFF", String.valueOf(marker.getObject()));
 		//Toast.makeText(getActivity(),marker.getObject(),Toast.LENGTH_SHORT);
-		mMarkerInfoImg.setImageResource(R.mipmap.a04);
+		mMarkerInfoImg.setImageResource(R.mipmap.a02);
 		mMarkerInfoLy.setVisibility(View.VISIBLE);
 
 
@@ -252,20 +254,22 @@ public class ParkingFrgment extends Fragment implements LocationSource , AMapLoc
 		// 自定义系统定位小蓝点
 		MyLocationStyle myLocationStyle = new MyLocationStyle();
 		// 设置小蓝点的图标
-		myLocationStyle.myLocationIcon(BitmapDescriptorFactory
-				.fromResource(R.mipmap.navi_map_gps_locked));
+//		myLocationStyle.myLocationIcon(BitmapDescriptorFactory
+//				.fromResource(R.mipmap.navi_map_gps_locked));
 		// 设置圆形的边框颜色
-		myLocationStyle.strokeColor(Color.BLACK);
+		myLocationStyle.strokeColor(Color.argb(100, 0, 0, 180));
 		// 设置圆形的填充颜色
 		myLocationStyle.radiusFillColor(Color.argb(100, 0, 0, 180));
-		// myLocationStyle.anchor(int,int)//设置小蓝点的锚点
+		 //myLocationStyle.anchor(0.5,0.5);//设置小蓝点的锚点
 		// 设置圆形的边框粗细
 		myLocationStyle.strokeWidth(1.0f);
 		aMap.setMyLocationStyle(myLocationStyle);
 		aMap.setLocationSource(this);// 设置定位监听
 		aMap.getUiSettings().setMyLocationButtonEnabled(true);// 设置默认定位按钮是否显示
+		aMap.getUiSettings().setCompassEnabled(true);
 		aMap.setMyLocationEnabled(true);// 设置为true表示显示定位层并可触发定位，false表示隐藏定位层并不可触发定位，默认是false
 		// aMap.setMyLocationType()
+		aMap.setMyLocationType(AMap.LOCATION_TYPE_LOCATE);
 	}
 
 	@Override
@@ -299,7 +303,10 @@ public class ParkingFrgment extends Fragment implements LocationSource , AMapLoc
 		if (mListener != null && amapLocation != null) {
 			if (amapLocation != null
 					&& amapLocation.getErrorCode() == 0) {
+				//float x = amapLocation.getBearing();
 				mListener.onLocationChanged(amapLocation);// 显示系统小蓝点
+				currentLatitude = amapLocation.getLatitude();
+				currentLongitude = amapLocation.getLongitude();
 			} else {
 				String errText = "定位失败," + amapLocation.getErrorCode()+ ": " + amapLocation.getErrorInfo();
 				Log.e("AmapErr",errText);
@@ -311,9 +318,10 @@ public class ParkingFrgment extends Fragment implements LocationSource , AMapLoc
 	@Override
 	public void activate(OnLocationChangedListener listener) {
 		mListener = listener;
+
 		if (mlocationClient == null) {
 			mlocationClient = new AMapLocationClient(getActivity());
-			mLocationOption = new AMapLocationClientOption();
+			AMapLocationClientOption mLocationOption = new AMapLocationClientOption();
 			//设置定位监听
 			mlocationClient.setLocationListener(this);
 			//设置为高精度定位模式
