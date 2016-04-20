@@ -47,6 +47,7 @@ public class ParkingFrgment extends Fragment implements LocationSource , AMapLoc
 
 	//覆盖物相关
 	private Marker marker2;
+	private LatLng currentMarkerPosition;
 	//覆盖物详细信息的布局
 	private RelativeLayout mMarkerInfoLy;
 	private ImageView mMarkerInfoImg;
@@ -149,8 +150,14 @@ public class ParkingFrgment extends Fragment implements LocationSource , AMapLoc
 			public void onClick(View view) {
 				Log.d("DDD", "DDDD");
 				Intent intent = new Intent(getActivity(),NaviActivity.class);
-				intent.putExtra("Latitude",currentLatitude);
-				intent.putExtra("Longitude",currentLongitude);
+				//发送当前位置
+				intent.putExtra("currentLatitude",currentLatitude);
+				intent.putExtra("currentLongitude",currentLongitude);
+				//发送目标Marker位置
+				double endLatitude = currentMarkerPosition.latitude;
+				double endLongitude = currentMarkerPosition.longitude;
+				intent.putExtra("endLatitude",endLatitude);
+				intent.putExtra("endLongitude",endLongitude);
 				startActivityForResult(intent,1);
 			}
 		});
@@ -196,6 +203,9 @@ public class ParkingFrgment extends Fragment implements LocationSource , AMapLoc
 		//mMarkerInfoName.setText(parkingMarker.getClass().);
 		//mMarkerInfoDis.setText(marker.getObject().getClass());
 		Log.d("FFFFF", String.valueOf(marker.getObject()));
+		//获取当前选定的marker的位置信息
+		currentMarkerPosition = marker.getPosition();
+
 		//Toast.makeText(getActivity(),marker.getObject(),Toast.LENGTH_SHORT);
 		mMarkerInfoImg.setImageResource(R.mipmap.a02);
 		mMarkerInfoLy.setVisibility(View.VISIBLE);

@@ -11,8 +11,10 @@ import com.amap.api.navi.model.NaviLatLng;
 
 public class NaviActivity extends BaseNaviActivity {
 
-    private double Latitude;
-    private double Longitude;
+    private double startLatitude;
+    private double startLongitude;
+    private double endLatitude;
+    private double endLongitude;
     private NaviLatLng mStartLatlng;
 
     @Override
@@ -22,10 +24,15 @@ public class NaviActivity extends BaseNaviActivity {
         setContentView(R.layout.activity_navi);
 
         Intent intent = getIntent();
-        Latitude = intent.getDoubleExtra("Latitude", 0.0);
-        Longitude = intent.getDoubleExtra("Longitude",0.0);
+        startLatitude = intent.getDoubleExtra("currentLatitude", 0.0);
+        startLongitude = intent.getDoubleExtra("currentLongitude",0.0);
 
-        mStartLatlng = new NaviLatLng(Latitude, Longitude);
+        endLatitude = intent.getDoubleExtra("endLatitude",0.0);
+        endLongitude = intent.getDoubleExtra("endLongitude",0.0);
+
+        mStartLatlng = new NaviLatLng(startLatitude, startLongitude);
+        mEndLatlng = new NaviLatLng(endLatitude, endLongitude);
+
         mAMapNaviView = (AMapNaviView) findViewById(R.id.navi_view);
         mAMapNaviView.onCreate(savedInstanceState);
         mAMapNaviView.setAMapNaviViewListener(this);
