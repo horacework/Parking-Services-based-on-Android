@@ -1,5 +1,7 @@
 package com.example.horacechan.parking;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -148,8 +150,8 @@ public class ParkingFrgment extends Fragment implements LocationSource , AMapLoc
 		goToDestBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				Log.d("DDD", "DDDD");
-				Intent intent = new Intent(getActivity(),NaviActivity.class);
+
+				final Intent intent = new Intent(getActivity(),NaviActivity.class);
 				//发送当前位置
 				intent.putExtra("currentLatitude",currentLatitude);
 				intent.putExtra("currentLongitude",currentLongitude);
@@ -158,7 +160,28 @@ public class ParkingFrgment extends Fragment implements LocationSource , AMapLoc
 				double endLongitude = currentMarkerPosition.longitude;
 				intent.putExtra("endLatitude",endLatitude);
 				intent.putExtra("endLongitude",endLongitude);
-				startActivityForResult(intent,1);
+				//创建提示框
+				final AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+				dialog.setTitle("提示")
+						.setMessage("选择导航模式")
+						.setPositiveButton("实时导航", new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialogInterface, int i) {
+								intent.putExtra("isGPSNaviMode",true);
+								mMarkerInfoLy.setVisibility(View.GONE);
+								startActivityForResult(intent, 1);
+							}
+						})
+						.setNegativeButton("取消", null)
+						.setNeutralButton("模拟导航", new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialogInterface, int i) {
+								intent.putExtra("isGPSNaviMode",false);
+								mMarkerInfoLy.setVisibility(View.GONE);
+								startActivityForResult(intent,1);
+							}
+						})
+						.show();
 			}
 		});
 
@@ -172,6 +195,7 @@ public class ParkingFrgment extends Fragment implements LocationSource , AMapLoc
 			case 1:
 				if (resultCode == 1){
 					Log.d("导航完成","做点什么");
+					//TODO:自动弹出窗口询问是否要扫码入库
 				}else {
 					Log.d("导航停止返回","doSomething");
 				}
@@ -214,36 +238,6 @@ public class ParkingFrgment extends Fragment implements LocationSource , AMapLoc
 		return false;
 
 	}
-
-//	public void jumpPoint(final Marker marker) {
-//		final Handler handler = new Handler();
-//		final long start = SystemClock.uptimeMillis();
-//		Projection proj = aMap.getProjection();
-//		Point startPoint = proj.toScreenLocation(Constants.XIAN);
-//		startPoint.offset(0, -100);
-//		final LatLng startLatLng = proj.fromScreenLocation(startPoint);
-//		final long duration = 1500;
-//
-//		final Interpolator interpolator = new BounceInterpolator();
-//		handler.post(new Runnable() {
-//			@Override
-//			public void run() {
-//				long elapsed = SystemClock.uptimeMillis() - start;
-//				float t = interpolator.getInterpolation((float) elapsed
-//						/ duration);
-//				double lng = t * Constants.XIAN.longitude + (1 - t)
-//						* startLatLng.longitude;
-//				double lat = t * Constants.XIAN.latitude + (1 - t)
-//						* startLatLng.latitude;
-//				marker.setPosition(new LatLng(lat, lng));
-//				aMap.();// 刷新地图
-//				if (t < 1.0) {
-//					handler.postDelayed(this, 16);
-//				}
-//			}
-//		});
-//
-//	}
 
 	@Override
 	public void onInfoWindowClick(Marker marker) {
@@ -336,6 +330,7 @@ public class ParkingFrgment extends Fragment implements LocationSource , AMapLoc
 			mlocationClient.setLocationListener(this);
 			//设置为高精度定位模式
 			mLocationOption.setLocationMode(AMapLocationMode.Hight_Accuracy);
+			mLocationOption.setOnceLocation(false);
 			//设置定位参数
 			mlocationClient.setLocationOption(mLocationOption);
 			// 此方法为每隔固定时间会发起一次定位请求，为了减少电量消耗或网络流量消耗，
@@ -356,5 +351,7 @@ public class ParkingFrgment extends Fragment implements LocationSource , AMapLoc
 		}
 		mlocationClient = null;
 	}
+
+
 
 }

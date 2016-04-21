@@ -1,8 +1,13 @@
 package com.example.horacechan.parking;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Window;
+import android.widget.Toast;
 
 import com.amap.api.navi.AMapNavi;
 import com.amap.api.navi.AMapNaviView;
@@ -16,6 +21,7 @@ public class NaviActivity extends BaseNaviActivity {
     private double endLatitude;
     private double endLongitude;
     private NaviLatLng mStartLatlng;
+    private boolean isGPSNaviMode ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +36,8 @@ public class NaviActivity extends BaseNaviActivity {
         endLatitude = intent.getDoubleExtra("endLatitude",0.0);
         endLongitude = intent.getDoubleExtra("endLongitude",0.0);
 
+        isGPSNaviMode = intent.getBooleanExtra("isGPSNaviMode",false);
+
         mStartLatlng = new NaviLatLng(startLatitude, startLongitude);
         mEndLatlng = new NaviLatLng(endLatitude, endLongitude);
 
@@ -37,23 +45,7 @@ public class NaviActivity extends BaseNaviActivity {
         mAMapNaviView.onCreate(savedInstanceState);
         mAMapNaviView.setAMapNaviViewListener(this);
 
-        //noStartCalculate();
     }
-
-//    private void noStartCalculate() {
-//        //无起点算路须知：
-//        //AMapNavi在构造的时候，会startGPS，但是GPS启动需要一定时间
-//        //在刚构造好AMapNavi类之后立刻进行无起点算路，会立刻返回false
-//        //给人造成一种等待很久，依然没有算路成功 算路失败回调的错觉
-//        //因此，建议，提前获得AMapNavi对象实例，并判断GPS是否准备就绪
-//
-//        if (mAMapNavi.isGpsReady()) {
-//            mAMapNavi.calculateDriveRoute(mEndList, null, PathPlanningStrategy.DRIVING_DEFAULT);
-//        }else {
-//            Log.d("naviSSSS","位置获取失败啦啦啦啦");
-//            Toast.makeText(NaviActivity.this,"GPS不够快啊！",Toast.LENGTH_SHORT).show();
-//        }
-//    }
 
 
     @Override
@@ -65,14 +57,70 @@ public class NaviActivity extends BaseNaviActivity {
     }
 
     @Override
+    public void onInitNaviFailure() {
+        Toast.makeText(this, "初始化导航失败", Toast.LENGTH_SHORT).show();
+    }
+    @Override
     public void onInitNaviSuccess() {
+        Toast.makeText(this, "初始化导航成功，正在为你规划路线", Toast.LENGTH_SHORT).show();
         mAMapNavi.calculateDriveRoute(mStartList, mEndList, mWayPointList, PathPlanningStrategy.DRIVING_DEFAULT);
 
     }
+    @Override
+    public void onStartNavi(int type) {
+        Toast.makeText(this, "开始为您导航", Toast.LENGTH_SHORT).show();
+    }
+    @Override
+    public void onEndEmulatorNavi() {
+        Toast.makeText(this, "路径导航模拟结束", Toast.LENGTH_SHORT).show();
+        setResult(1);
+        finish();
+    }
 
     @Override
+    public void onArriveDestination() {
+        Toast.makeText(this, "已到达指定目的地", Toast.LENGTH_SHORT).show();
+        setResult(1);
+        finish();
+    }
+    @Override
     public void onCalculateRouteSuccess() {
-        mAMapNavi.startNavi(AMapNavi.GPSNaviMode);
+        Toast.makeText(this, "规划路线成功", Toast.LENGTH_SHORT).show();
+        if (isGPSNaviMode){
+            mAMapNavi.startNavi(AMapNavi.GPSNaviMode);
+        }else {
+            mAMapNavi.startNavi(AMapNavi.EmulatorNaviMode);
+        }
+    }
+    @Override
+    public void onNaviViewLoaded() {
+        Log.d("wlx", "导航页面加载成功");
+        Log.d("wlx", "请不要使用AMapNaviView.getMap().setOnMapLoadedListener();会overwrite导航SDK内部画线逻辑");
+    }
+
+    @Override
+    public boolean onNaviBackClick() {
+        return false;
+    }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event){
+        if (keyCode == KeyEvent.KEYCODE_BACK )
+        {
+            AlertDialog.Builder isExit = new AlertDialog.Builder(NaviActivity.this);
+            isExit.setTitle("提示")
+                    .setMessage("确定退出导航？")
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            setResult(0);
+                            finish();
+                        }
+                    })
+                    .setNegativeButton("取消", null)
+                    .show();
+        }
+
+        return false;
     }
 
 }
