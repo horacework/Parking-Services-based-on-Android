@@ -205,6 +205,7 @@ public class ParkingFrgment extends Fragment implements LocationSource, AMapLoca
         mMarkerInfoZanLy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //先判断用户是否登录
                 if (true){
                     String currentZanText = (String) mMarkerInfoZanNum.getText();
                     int currentZanNum = Integer.valueOf(currentZanText) ;
@@ -252,10 +253,6 @@ public class ParkingFrgment extends Fragment implements LocationSource, AMapLoca
 //				jumpPoint(marker);
 //			}
 //		}
-        //Object parkingMarker = marker.getObject();
-        //mMarkerInfoName.setText(parkingMarker.getClass().);
-        //mMarkerInfoDis.setText(marker.getObject().getClass());
-        Log.d("FFFFF", String.valueOf(marker.getObject()));
         //获取当前选定的marker的位置信息
         currentMarkerPosition = marker.getPosition();
         MarkId markId = (MarkId)marker.getObject();
