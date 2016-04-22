@@ -202,6 +202,19 @@ public class ParkingFrgment extends Fragment implements LocationSource, AMapLoca
             }
         });
 
+        mMarkerInfoZanLy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (true){
+                    String currentZanText = (String) mMarkerInfoZanNum.getText();
+                    int currentZanNum = Integer.valueOf(currentZanText) ;
+                    mMarkerInfoZanImg.setImageResource(R.mipmap.map_zan_checked);
+                    mMarkerInfoZanNum.setText(String.valueOf(currentZanNum + 1));
+                }else {
+                    Toast.makeText(getActivity(), "点赞前请先登录", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
     }
 

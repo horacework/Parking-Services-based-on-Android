@@ -40,6 +40,9 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
     private Fragment mTabFragTansuo;
     private Fragment mTabFragMe;
 
+    //记录用户是否已登录
+    //public boolean isLogin = true;
+
     private final int fontColorUnSelect = 0xff272636;
     private final int fontColorBeSelect = 0xff11CD6E;
 
