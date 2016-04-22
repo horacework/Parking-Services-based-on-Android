@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,11 +59,13 @@ public class ParkingFrgment extends Fragment implements LocationSource, AMapLoca
     //覆盖物相关
     private Marker marker2;
     private LatLng currentMarkerPosition;
+    private String currentMarkerId = null;
     //覆盖物详细信息的布局
     private RelativeLayout mMarkerInfoLy;
+    private LinearLayout mMarkerInfoZanLy;
     private ImageView mMarkerInfoImg;
-    private ImageView mMarkerZanImg;
-    private TextView mMarkerZanNum;
+    private ImageView mMarkerInfoZanImg;
+    private TextView mMarkerInfoZanNum;
     private TextView mMarkerInfoName;
     private TextView mMarkerInfoDis;
 
@@ -94,13 +97,14 @@ public class ParkingFrgment extends Fragment implements LocationSource, AMapLoca
         initLocation();
 
         mRequest = new GetMarkRequest();
-        mRequest.id = "b4850fda-047b-11e6-b034-00ff9099da81";
+//        mRequest.id = "b4850fda-047b-11e6-b034-00ff9099da81";
         mRequest.setOnResponseListener(this);
-        mRequest.execute();
+        mRequest.setRequestType(0);
+//        mRequest.execute();
 
         markIdRequest = new GetMarkIdRequest();
         markIdRequest.setOnResponseListener(this);
-        markIdRequest.setRequestType(4);
+        markIdRequest.setRequestType(1);
         markIdRequest.execute();
 
 
@@ -110,7 +114,7 @@ public class ParkingFrgment extends Fragment implements LocationSource, AMapLoca
 
         markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.maker));
 
-        addOverlays(ParkingInfo.infos);
+        //addOverlays(ParkingInfo.infos);
 
         Marker marker = aMap.addMarker(markerOptions);
 
@@ -129,31 +133,22 @@ public class ParkingFrgment extends Fragment implements LocationSource, AMapLoca
         return view;
     }
 
-    private void addOverlays(List<ParkingInfo> infos) {
+    private void addOverlays(List<MarkId> infos) {
         //批量添加覆盖物，组装addMarkers()
         aMap.clear();
         //ArrayList<MarkerOptions> markerOptionsArrayList = new ArrayList<MarkerOptions>();
-        //ArrayList<Marker> MarkerArrayList;
-        //boolean moverToCenter = false;
-        Marker marker = null;
         //构造ArrayList<MarkerOptions>
-        for (final ParkingInfo info : infos) {
+        for (final MarkId info : infos) {
+            //Marker marker = new Marker();
             LatLng latLng = new LatLng(info.getLatitude(), info.getLongitude());
             MarkerOptions options = new MarkerOptions()
                     .position(latLng)
                     .icon(BitmapDescriptorFactory.fromResource(R.mipmap.maker))
                     .zIndex(5);
-            marker = aMap.addMarker(options);
-            //marker.setTitle(info.getName());
-            ParkingInfo MarkerObject = new ParkingInfo(info.getLatitude(), info.getLongitude(), info.getImgId(), info.getName(), info.getDistance(), info.getZan());
-            Object mmm = new Object() {
-                int i = info.getImgId();
-                String a = info.getName();
-            };
-
-            marker.setObject(mmm);
+            Marker marker = aMap.addMarker(options);
+            marker.setObject(info);
         }
-        //MarkerArrayList = aMap.addMarkers(markerOptionsArrayList, moverToCenter);
+        //aMap.addMarkers(markerOptionsArrayList,false);//用于多个显示Marker
     }
 
     private void initWeight(View view) {
@@ -161,9 +156,10 @@ public class ParkingFrgment extends Fragment implements LocationSource, AMapLoca
         mapView = (MapView) view.findViewById(R.id.map_view);
         //常规控件
         mMarkerInfoLy = (RelativeLayout) view.findViewById(R.id.id_marker_info);
+        mMarkerInfoZanLy = (LinearLayout) view.findViewById(R.id.zan_layout);
         mMarkerInfoImg = (ImageView) view.findViewById(R.id.info_img);
-        mMarkerZanImg = (ImageView) view.findViewById(R.id.zan_img);
-        mMarkerZanNum = (TextView) view.findViewById(R.id.info_zan_num);
+        mMarkerInfoZanImg = (ImageView) view.findViewById(R.id.zan_img);
+        mMarkerInfoZanNum = (TextView) view.findViewById(R.id.info_zan_num);
         mMarkerInfoName = (TextView) view.findViewById(R.id.info_name);
         mMarkerInfoDis = (TextView) view.findViewById(R.id.info_distance);
         //初始化导航按钮
@@ -249,11 +245,15 @@ public class ParkingFrgment extends Fragment implements LocationSource, AMapLoca
         Log.d("FFFFF", String.valueOf(marker.getObject()));
         //获取当前选定的marker的位置信息
         currentMarkerPosition = marker.getPosition();
-
-        //Toast.makeText(getActivity(),marker.getObject(),Toast.LENGTH_SHORT);
-        mMarkerInfoImg.setImageResource(R.mipmap.a02);
-        mMarkerInfoLy.setVisibility(View.VISIBLE);
-
+        MarkId markId = (MarkId)marker.getObject();
+        currentMarkerId = markId.getId();
+        //Toast.makeText(getActivity(),currentMarkerId,Toast.LENGTH_LONG).show();
+        if (currentMarkerId != null){
+            mRequest.id = currentMarkerId;
+            mRequest.execute();
+        }else {
+            Toast.makeText(getActivity(),"无法获取当前Marker的ID",Toast.LENGTH_LONG).show();
+        }
 
         return false;
 
@@ -392,14 +392,19 @@ public class ParkingFrgment extends Fragment implements LocationSource, AMapLoca
             switch (response.getRequestType()) {
                 case 0:
                     MarkInfo info = (MarkInfo) response.getData();
-                    Toast.makeText(getActivity(), info.toString(), Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getActivity(), info.toString(), Toast.LENGTH_LONG).show();
+                    mMarkerInfoName.setText(info.getName());
+                    mMarkerInfoDis.setText(info.getPrice() + "元/小时");
+                    mMarkerInfoZanNum.setText(String.valueOf(info.getZan()));
+                    //TODO: HTTP img获取并显示
+                    mMarkerInfoImg.setImageResource(R.mipmap.a03);
+                    mMarkerInfoLy.setVisibility(View.VISIBLE);
                     break;
+                case 1:
+                    List<MarkId> AllMarkerId = (List<MarkId>) response.getDatas();
+                    addOverlays(AllMarkerId);
             }
 
-        }
-
-        if (response.getStatus()==404){
-            List<MarkId> id = (List<MarkId>) response.getDatas();
         }
 
     }

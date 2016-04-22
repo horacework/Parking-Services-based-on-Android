@@ -34,8 +34,7 @@ public class GetMarkIdRequest  extends BaseHttpRequestClient{
     @Override
     public void parseResponse(BaseResponse response, JSONObject json) throws JSONException {
 
-        // FIXME: 2016/4/22 服务器改回200
-        if (response.getStatus()==404){
+        if (response.getStatus()==200){
             List<MarkId> info= JSONUtils.toList(json.optString("data"), new TypeToken<ArrayList<MarkId>>(){}.getType());
             response.setDatas(info);
         }

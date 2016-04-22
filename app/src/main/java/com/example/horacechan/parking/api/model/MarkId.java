@@ -17,6 +17,13 @@ public class MarkId {
     private double longitude;
     private int isDel;
 
+    public MarkId(String id , double latitude , double longitude) {
+        this.id = id;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.isDel = 0;
+    }
+
     public String getId() {
         return id;
     }
