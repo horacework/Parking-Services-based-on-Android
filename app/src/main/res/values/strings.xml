@@ -2,7 +2,7 @@
     <string name="app_name">Parking</string>
     <string name="action_settings">Settings</string>
 
-
+    <!-- 高德导航SDK -->
     <string name="app_id">输入您讯飞的appid</string>
     <string name="preference_default_tts_role">xiaoyan</string>
     <string name="preference_key_tts_speed">tts_speed</string>
@@ -17,4 +17,12 @@
     <string name="preference_title_tts_pitch">语调</string>
     <string name="preference_default_tts_pitch">50</string>
     <string name="intell_bd_title">智能播报</string>
+
+    <!-- Tab Me  -->
+    <string name="Me_Money">我的余额</string>
+    <string name="Me_Car">我的车牌</string>
+    <string name="Me_ParkingLog">停车记录</string>
+    <string name="Me_Favorite">我的收藏</string>
+    <string name="Me_Advice">反馈意见</string>
+
 </resources>

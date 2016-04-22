@@ -23,9 +23,40 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="200sp"
+        android:gravity="center"
         android:background="#FF1EB4F1">
 
-        
+        <Button
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/buttonstyle"
+            style="?android:attr/borderlessButtonStyle"
+            android:textColor="#FFFFFFFF"
+            android:textSize="19sp"
+            android:text="登录"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#FFFFFFFF"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:text="陈厚仁"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textColor="#FFFFFFFF"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:text="您的车子在停车场  >>>  点击获取详情"/>
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -65,7 +96,7 @@
                         android:layout_height="wrap_content"
                         android:textStyle="bold"
                         android:textSize="18sp"
-                        android:text="我的余额"/>
+                        android:text="@string/Me_Money"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -98,7 +129,7 @@
                         android:layout_height="wrap_content"
                         android:textStyle="bold"
                         android:textSize="18sp"
-                        android:text="我的车牌"/>
+                        android:text="@string/Me_Car"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -136,7 +167,7 @@
                         android:layout_height="wrap_content"
                         android:textStyle="bold"
                         android:textSize="18sp"
-                        android:text="停车记录"/>
+                        android:text="@string/Me_ParkingLog"/>
 
                 </LinearLayout>
 
@@ -164,7 +195,7 @@
                         android:layout_height="wrap_content"
                         android:textStyle="bold"
                         android:textSize="18sp"
-                        android:text="收藏车场"/>
+                        android:text="@string/Me_Favorite"/>
 
                 </LinearLayout>
 
@@ -198,7 +229,7 @@
                         android:layout_height="wrap_content"
                         android:textStyle="bold"
                         android:textSize="18sp"
-                        android:text="反馈意见"/>
+                        android:text="@string/Me_Advice"/>
 
                 </LinearLayout>
 
