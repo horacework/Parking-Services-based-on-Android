@@ -8,17 +8,8 @@
 
 <LinearLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical" >
-    
-    
-    <!--<TextView -->
-        <!--android:layout_width="fill_parent"-->
-        <!--android:layout_height="fill_parent"-->
-        <!--android:gravity="center"-->
-        <!--android:text="Tab04"-->
-        <!--android:textSize="30sp"-->
-        <!--android:textStyle="bold"/>-->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,16 +18,17 @@
         android:background="#FF1EB4F1">
 
         <Button
-            android:visibility="gone"
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/buttonstyle"
             style="?android:attr/borderlessButtonStyle"
             android:textColor="#FFFFFFFF"
             android:textSize="19sp"
-            android:text="登录"/>
+            android:text="@string/Me_login"/>
 
         <LinearLayout
+            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -55,7 +47,7 @@
                 android:textColor="#FFFFFFFF"
                 android:textSize="13sp"
                 android:textStyle="bold"
-                android:text="您的车子在停车场  >>>  点击获取详情"/>
+                android:text="@string/Me_CarStatusOn"/>
         </LinearLayout>
 
     </LinearLayout>
@@ -155,7 +147,7 @@
                 <ImageView
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:src="@mipmap/parking_log"/>
+                    android:src="@mipmap/order"/>
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -167,7 +159,7 @@
                         android:layout_height="wrap_content"
                         android:textStyle="bold"
                         android:textSize="18sp"
-                        android:text="@string/Me_ParkingLog"/>
+                        android:text="@string/Me_Order"/>
 
                 </LinearLayout>
 
@@ -217,6 +209,34 @@
                 <ImageView
                     android:layout_width="50dp"
                     android:layout_height="50dp"
+                    android:src="@mipmap/parking_log"/>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:textSize="18sp"
+                        android:text="@string/Me_ParkingLog"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="110dp"
+                android:layout_marginLeft="10dp"
+                android:background="#FFDCDCE0"
+                android:gravity="center"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:src="@mipmap/advice"/>
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -230,15 +250,8 @@
                         android:textStyle="bold"
                         android:textSize="18sp"
                         android:text="@string/Me_Advice"/>
-
                 </LinearLayout>
 
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="110dp"
-                android:layout_marginLeft="10dp"
-                android:layout_weight="1">
             </LinearLayout>
         </LinearLayout>
 

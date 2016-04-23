@@ -19,10 +19,15 @@
     <string name="intell_bd_title">智能播报</string>
 
     <!-- Tab Me  -->
+    <string name="Me_login">登录/注册</string>
+    <string name="Me_CarStatusOn">您的车子在停车场  >>>  点击获取详情</string>
+    <string name="Me_CarStatusOFF">您暂时没有车子在停车场</string>
     <string name="Me_Money">我的余额</string>
     <string name="Me_Car">我的车牌</string>
-    <string name="Me_ParkingLog">停车记录</string>
+    <string name="Me_Order">我的预约</string>
     <string name="Me_Favorite">我的收藏</string>
+    <string name="Me_ParkingLog">停车记录</string>
     <string name="Me_Advice">反馈意见</string>
+
 
 </resources>
