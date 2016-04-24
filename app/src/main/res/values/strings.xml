@@ -29,5 +29,11 @@
     <string name="Me_ParkingLog">停车记录</string>
     <string name="Me_Advice">反馈意见</string>
 
+    <!--Login Activity-->
+    <string name="Login_enterUsername_hint">请输入用户名</string>
+    <string name="Login_enterPassword_hint">请输入密码</string>
+    <string name="Login_enterPassword2_hint">再次确认密码</string>
+    <string name="Login_login_btn">登录</string>
+    <string name="Login_chanceTosignup_text"><![CDATA[转到注册>>>]]></string>
 
 </resources>

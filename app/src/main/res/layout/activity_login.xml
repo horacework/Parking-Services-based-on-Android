@@ -22,7 +22,7 @@
             <ImageView
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:background="@mipmap/user_login"/>
+                android:background="@mipmap/user_login" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -42,7 +42,7 @@
                 android:textSize="18sp"
                 android:inputType="text"
                 android:maxLength="20"
-                android:hint="请输入用户名" />
+                android:hint="@string/Login_enterUsername_hint" />
 
             <EditText
                 android:layout_width="match_parent"
@@ -58,7 +58,7 @@
                 android:ems="10"
                 android:id="@+id/password1"
                 android:maxLength="20"
-                android:hint="请输入密码"/>
+                android:hint="@string/Login_enterPassword_hint"/>
 
             <EditText
                 android:visibility="gone"
@@ -75,24 +75,45 @@
                 android:ems="10"
                 android:id="@+id/password2"
                 android:maxLength="20"
-                android:hint="再次确认密码"/>
+                android:hint="@string/Login_enterPassword2_hint"/>
 
-            <Button
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="90dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp">
 
-                android:background="#337ab7"
-                android:textColor="#FFFFFFFF"
-                android:textSize="18sp"
-                android:text="登录"
-                android:id="@+id/login_btn" />
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#337ab7"
+                    style="?android:attr/borderlessButtonStyle"
 
-            <TextView
-                android:layout_width="wrap_content"
+                    android:textColor="#FFFFFFFF"
+                    android:textSize="18sp"
+                    android:text="@string/Login_login_btn"
+                    android:id="@+id/login_btn" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:text="转到注册>>>"/>
+                android:layout_marginTop="20dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:gravity="right">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:text="@string/Login_chanceTosignup_text"/>
+
+            </LinearLayout>
+
+
         </LinearLayout>
 
     </LinearLayout>

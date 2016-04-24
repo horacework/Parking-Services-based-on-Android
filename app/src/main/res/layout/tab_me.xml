@@ -18,7 +18,7 @@
         android:background="#FF1EB4F1">
 
         <Button
-
+            android:id="@+id/loginBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/buttonstyle"
@@ -34,6 +34,7 @@
             android:gravity="center"
             android:orientation="vertical">
             <TextView
+                android:id="@+id/userName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#FFFFFFFF"
@@ -41,6 +42,7 @@
                 android:textStyle="bold"
                 android:text="陈厚仁"/>
             <TextView
+                android:id="@+id/userState"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -66,6 +68,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <LinearLayout
+                android:id="@+id/MyMoneyLy"
                 android:layout_width="0dp"
                 android:layout_height="110dp"
                 android:background="#FFDCDCE0"
@@ -90,6 +93,7 @@
                         android:textSize="18sp"
                         android:text="@string/Me_Money"/>
                     <TextView
+                        android:id="@+id/MyMoneyRemain"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="26.00 元"/>
@@ -99,6 +103,7 @@
 
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/MyCarLy"
                 android:layout_width="0dp"
                 android:layout_height="110dp"
                 android:background="#FFDCDCE0"
@@ -123,6 +128,7 @@
                         android:textSize="18sp"
                         android:text="@string/Me_Car"/>
                     <TextView
+                        android:id="@+id/MyCarNum"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="3 张"/>
@@ -138,6 +144,7 @@
             android:layout_marginTop="10dp"
             android:orientation="horizontal">
             <LinearLayout
+                android:id="@+id/MyOrderLy"
                 android:layout_width="0dp"
                 android:layout_height="110dp"
                 android:background="#FFDCDCE0"
@@ -165,6 +172,7 @@
 
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/MyFavoriteLy"
                 android:layout_width="0dp"
                 android:layout_height="110dp"
                 android:background="#FFDCDCE0"
@@ -200,6 +208,7 @@
             android:layout_marginTop="10dp"
             android:orientation="horizontal">
             <LinearLayout
+                android:id="@+id/MyParkingLy"
                 android:layout_width="0dp"
                 android:layout_height="110dp"
                 android:background="#FFDCDCE0"
@@ -227,6 +236,7 @@
 
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/MyAdvice"
                 android:layout_width="0dp"
                 android:layout_height="110dp"
                 android:layout_marginLeft="10dp"
