@@ -60,6 +60,7 @@ public class LoginActivity extends ActionBarActivity {
                     //登录
                     if (checkUsername(username,regEx,20) && checkPassword(password,regEx,20)){
                         //TODO:发送登录请求
+                        
                         Toast.makeText(getApplication(), "登录啦啦啦啦", Toast.LENGTH_SHORT).show();
                     }
                 } else {
