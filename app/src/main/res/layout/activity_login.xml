@@ -29,11 +29,10 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/username"
+                android:id="@+id/Login_username"
                 android:background="#FFFFFFFF"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
@@ -56,7 +55,7 @@
                 android:textSize="18sp"
                 android:inputType="textPassword"
                 android:ems="10"
-                android:id="@+id/password1"
+                android:id="@+id/Login_password1"
                 android:maxLength="20"
                 android:hint="@string/Login_enterPassword_hint"/>
 
@@ -73,7 +72,7 @@
                 android:textSize="18sp"
                 android:inputType="textPassword"
                 android:ems="10"
-                android:id="@+id/password2"
+                android:id="@+id/Login_password2"
                 android:maxLength="20"
                 android:hint="@string/Login_enterPassword2_hint"/>
 
@@ -89,11 +88,10 @@
                     android:layout_height="wrap_content"
                     android:background="#337ab7"
                     style="?android:attr/borderlessButtonStyle"
-
                     android:textColor="#FFFFFFFF"
                     android:textSize="18sp"
                     android:text="@string/Login_login_btn"
-                    android:id="@+id/login_btn" />
+                    android:id="@+id/Login_login_btn" />
 
             </LinearLayout>
 
@@ -106,6 +104,7 @@
                 android:gravity="right">
 
                 <TextView
+                    android:id="@+id/Login_exchange_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="15sp"

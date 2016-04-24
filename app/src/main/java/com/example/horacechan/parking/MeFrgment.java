@@ -14,6 +14,7 @@ import android.widget.Toast;
 public class MeFrgment extends Fragment {
 
 	Button loginBtn;
+	LinearLayout userInfoLy;
 	TextView userName;
 	TextView userState;
 	LinearLayout MyMoneyLy;
@@ -32,53 +33,66 @@ public class MeFrgment extends Fragment {
 		//初始化控件
 		initWeight(view);
 
-		initOnCilckListener(view);
+		initOnCilckListener();
+
+		if (false){
+			//检测是否已经登录
+			//TODO: 设置一个全局变量放是否登录和用户资料
+			loginBtn.dispatchSystemUiVisibilityChanged(View.GONE);
+			//TODO: userName userState 状态改变
+			userInfoLy.dispatchSystemUiVisibilityChanged(View.VISIBLE);
+		}
 
 		return view;
 	}
 
-	private void initOnCilckListener(View view) {
+	private void initOnCilckListener() {
 
 		loginBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				userLogin(view);
+					userLogin();
 			}
 		});
 		userState.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				userStateInfo(view);
+				userStateInfo();
 			}
 		});
 		MyMoneyLy.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				checkMyMoney(view);
+				if (false){
+					checkMyMoney();
+				}else {
+					Toast.makeText(getActivity(),"请先登录",Toast.LENGTH_SHORT).show();
+					userLogin();
+				}
 			}
 		});
 		MyCarLy.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				setMyCar(view);
+				setMyCar();
 			}
 		});
 		MyOrderLy.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				checkMyOrder(view);
+				checkMyOrder();
 			}
 		});
 		MyFavoriteLy.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				checkMyFavorite(view);
+				checkMyFavorite();
 			}
 		});
 		MyParkingLy.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				myParkingLog(view);
+				myParkingLog();
 			}
 		});
 		MyAdvice.setOnClickListener(new View.OnClickListener() {
@@ -94,37 +108,37 @@ public class MeFrgment extends Fragment {
 		Toast.makeText(getActivity(),"正在建设中",Toast.LENGTH_SHORT).show();
 	}
 
-	private void myParkingLog(View view) {
+	private void myParkingLog() {
 		//TODO:新Activity，列出我的停车记录
 		Toast.makeText(getActivity(),"正在建设中",Toast.LENGTH_SHORT).show();
 	}
 
-	private void checkMyFavorite(View view) {
+	private void checkMyFavorite() {
 		//TODO:新Activity，查看我点过赞的停车场记录，顺便可以一键导航
 		Toast.makeText(getActivity(),"正在建设中",Toast.LENGTH_SHORT).show();
 	}
 
-	private void checkMyOrder(View view) {
+	private void checkMyOrder() {
 		//TODO:新Activity，查看我的预定以及状态 List
 		Toast.makeText(getActivity(),"正在建设中",Toast.LENGTH_SHORT).show();
 	}
 
-	private void setMyCar(View view) {
+	private void setMyCar() {
 		//TODO:新Activity，设置使用车牌。添加我的车牌
 		Toast.makeText(getActivity(),"正在建设中",Toast.LENGTH_SHORT).show();
 	}
 
-	private void checkMyMoney(View view) {
+	private void checkMyMoney() {
 		//TODO:新Activity，金额变动记录
 		Toast.makeText(getActivity(),"正在建设中",Toast.LENGTH_SHORT).show();
 	}
 
-	private void userStateInfo(View view) {
+	private void userStateInfo() {
 		//TODO:新Activity，这是有车子在停，显示在哪里已经停了多久，大概要收多少钱
 		Toast.makeText(getActivity(),"正在建设中",Toast.LENGTH_SHORT).show();
 	}
 
-	private void userLogin(View view) {
+	private void userLogin() {
 		Intent intent = new Intent(getActivity(),LoginActivity.class);
 		startActivityForResult(intent,1);
 	}
@@ -141,6 +155,7 @@ public class MeFrgment extends Fragment {
 	private void initWeight(View view) {
 
 		loginBtn = (Button) view.findViewById(R.id.loginBtn);
+		userInfoLy = (LinearLayout) view.findViewById(R.id.userInfoLy);
 		userName = (TextView) view.findViewById(R.id.userName);
 		userState = (TextView) view.findViewById(R.id.userState);
 		MyMoneyLy = (LinearLayout) view.findViewById(R.id.MyMoneyLy);

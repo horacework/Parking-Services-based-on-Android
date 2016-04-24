@@ -12,12 +12,14 @@
     android:orientation="vertical" >
 
     <LinearLayout
+        android:id="@+id/userInfoLy"
         android:layout_width="match_parent"
         android:layout_height="200sp"
         android:gravity="center"
         android:background="#FF1EB4F1">
 
         <Button
+
             android:id="@+id/loginBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -93,6 +95,7 @@
                         android:textSize="18sp"
                         android:text="@string/Me_Money"/>
                     <TextView
+                        android:visibility="gone"
                         android:id="@+id/MyMoneyRemain"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -128,6 +131,7 @@
                         android:textSize="18sp"
                         android:text="@string/Me_Car"/>
                     <TextView
+                        android:visibility="gone"
                         android:id="@+id/MyCarNum"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
