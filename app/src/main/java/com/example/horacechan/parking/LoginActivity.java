@@ -1,7 +1,6 @@
 package com.example.horacechan.parking;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -17,6 +16,7 @@ import com.example.horacechan.parking.api.LocalHost;
 import com.example.horacechan.parking.api.http.base.BaseResponse;
 import com.example.horacechan.parking.api.http.base.BaseResponseListener;
 import com.example.horacechan.parking.api.http.request.LoginRequest;
+import com.example.horacechan.parking.api.http.request.SignupRequest;
 import com.example.horacechan.parking.api.model.UserEntity;
 import com.example.horacechan.parking.util.MD5Utils;
 
@@ -36,6 +36,7 @@ public class LoginActivity extends ActionBarActivity implements BaseResponseList
 
     //请求
     LoginRequest mLoginRequest;
+    SignupRequest mSignupRequest;
 
     //SharePreference
     SharedPreferences.Editor ShareEditor;
@@ -55,6 +56,10 @@ public class LoginActivity extends ActionBarActivity implements BaseResponseList
         mLoginRequest = new LoginRequest();
         mLoginRequest.setOnResponseListener(this);
         mLoginRequest.setRequestType(0);
+        //Signup请求初始化
+        mSignupRequest = new SignupRequest();
+        mSignupRequest.setOnResponseListener(this);
+        mSignupRequest.setRequestType(1);
 
         initOnCilckListener();
 
@@ -92,11 +97,12 @@ public class LoginActivity extends ActionBarActivity implements BaseResponseList
                 if (LoginOrSignup) {
                     //登录
                     if (checkUsername(username,regEx,20) && checkPassword(password,regEx,20)){
-                        //TODO:发送登录请求
+                        //发送登录请求
                         mLoginRequest.username = username;
                         mLoginRequest.password = MD5Utils.getMD5(password);
+//                        mLoginRequest.password = password;
                         mLoginRequest.deviceId = deviceId;
-                        mLoginRequest.execute();
+                        mLoginRequest.post();
                         Toast.makeText(getApplication(), "登录啦啦啦啦", Toast.LENGTH_SHORT).show();
                     }
                 } else {
@@ -104,8 +110,14 @@ public class LoginActivity extends ActionBarActivity implements BaseResponseList
                     if (!password.equals(password2)){
                         Toast.makeText(getApplication(), "两次密码必须一致", Toast.LENGTH_SHORT).show();
                     }else if (checkUsername(username,regEx,20) && checkPassword(password,regEx,20)){
-                        //TODO：发送注册请求
-
+                        //发送注册请求
+                        mSignupRequest.username = username;
+                        mSignupRequest.password = MD5Utils.getMD5(password);
+                        mSignupRequest.password2 = MD5Utils.getMD5(password2);
+//                        mSignupRequest.password = password;
+//                        mSignupRequest.password2 = password2;
+                        mSignupRequest.deviceId = deviceId;
+                        mSignupRequest.post();
                         Toast.makeText(getApplication(), "注册啦啦啦啦", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -167,19 +179,32 @@ public class LoginActivity extends ActionBarActivity implements BaseResponseList
     public void onSuccess(BaseResponse response) {
         if (response.getStatus() == 200){
             switch (response.getRequestType()){
+
                 case 0://发送登录请求
                     UserEntity user = (UserEntity) response.getData();
                     //设置全局userID
                     LocalHost.INSTANCE.setUserid(user.getId());
+                    LocalHost.INSTANCE.setUserName(user.getName());
                     //数据持久化到SharePreference中
                     ShareEditor.putString("userId",user.getId());
-                    ShareEditor.putString("userName",user.getName());
-                    //给上一个Activity返回userID
-                    Intent intent = new Intent();
-                    intent.putExtra("userId",user.getId());
-                    intent.putExtra("userName",user.getName());
-                    setResult(200, intent);
+                    ShareEditor.putString("userName", user.getName());
+                    ShareEditor.commit();
+                    setResult(200);
                     finish();
+                    break;
+
+                case 1://发送注册请求
+                    UserEntity userEntity = (UserEntity) response.getData();
+                    LocalHost.INSTANCE.setUserid(userEntity.getId());
+                    LocalHost.INSTANCE.setUserName(userEntity.getName());
+                    ShareEditor.putString("userId", userEntity.getId());
+                    ShareEditor.putString("userName", userEntity.getName());
+                    ShareEditor.commit();
+                    Toast.makeText(getApplication(), "登录啦啦啦啦", Toast.LENGTH_SHORT).show();
+                    setResult(200);
+                    finish();
+                    break;
+
             }
         }else if (response.getStatus()==404){
             Toast.makeText(this, response.getMsg(), Toast.LENGTH_LONG).show();

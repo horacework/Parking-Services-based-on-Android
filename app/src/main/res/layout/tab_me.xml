@@ -12,14 +12,13 @@
     android:orientation="vertical" >
 
     <LinearLayout
-        android:id="@+id/userInfoLy"
+
         android:layout_width="match_parent"
         android:layout_height="200sp"
         android:gravity="center"
         android:background="#FF1EB4F1">
 
         <Button
-
             android:id="@+id/loginBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -30,6 +29,7 @@
             android:text="@string/Me_login"/>
 
         <LinearLayout
+            android:id="@+id/userInfoLy"
             android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -267,7 +267,21 @@
                 </LinearLayout>
 
             </LinearLayout>
+
         </LinearLayout>
+
+        <Button
+            android:visibility="gone"
+            android:id="@+id/logoutBtn"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:background="#d9534f"
+            style="?android:attr/borderlessButtonStyle"
+            android:textColor="#FFFFFFFF"
+            android:textSize="18sp"
+            android:text="退出登录"/>
 
     </LinearLayout>
 

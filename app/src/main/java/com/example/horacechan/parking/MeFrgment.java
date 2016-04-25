@@ -1,6 +1,10 @@
 package com.example.horacechan.parking;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -10,6 +14,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.horacechan.parking.api.LocalHost;
 
 public class MeFrgment extends Fragment {
 
@@ -25,6 +31,13 @@ public class MeFrgment extends Fragment {
 	LinearLayout MyFavoriteLy;
 	LinearLayout MyParkingLy;
 	LinearLayout MyAdvice;
+	Button logoutBtn;
+
+	String isLoginUserId = null;
+	String isLoginUserName = null;
+	String isLoginUserState = null;
+
+	SharedPreferences.Editor editor;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -35,15 +48,42 @@ public class MeFrgment extends Fragment {
 
 		initOnCilckListener();
 
-		if (false){
+		if (LocalHost.INSTANCE.getUserid()!= null){
 			//检测是否已经登录
-			//TODO: 设置一个全局变量放是否登录和用户资料
-			loginBtn.dispatchSystemUiVisibilityChanged(View.GONE);
-			//TODO: userName userState 状态改变
-			userInfoLy.dispatchSystemUiVisibilityChanged(View.VISIBLE);
+			changeToLogin();
 		}
 
 		return view;
+	}
+
+	private void changeToLogin() {
+
+		loginBtn.setVisibility(View.GONE);
+		isLoginUserId = LocalHost.INSTANCE.getUserid();
+		isLoginUserName = LocalHost.INSTANCE.getUserName();
+		userName.setText(isLoginUserName);
+		//TODO: 发送请求当前有没有车子在停车并显示
+		userState.setText("当前没有车子在停车场停车");
+		userInfoLy.setVisibility(View.VISIBLE);
+		logoutBtn.setVisibility(View.VISIBLE);
+		//TODO: 更新金额与当前车牌
+	}
+
+	private void changeToUnLogin() {
+		//清空本地变量
+		isLoginUserName = null;
+		isLoginUserId = null;
+		//清空全局变量
+		LocalHost.INSTANCE.setUserid(null);
+		LocalHost.INSTANCE.setUserName(null);
+		//清空SharePreference
+		editor.remove("userId");
+		editor.remove("userName");
+		editor.commit();
+		//布局操作
+		userInfoLy.setVisibility(View.GONE);
+		logoutBtn.setVisibility(View.GONE);
+		loginBtn.setVisibility(View.VISIBLE);
 	}
 
 	private void initOnCilckListener() {
@@ -63,10 +103,10 @@ public class MeFrgment extends Fragment {
 		MyMoneyLy.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				if (false){
+				if (isLoginUserName != null) {
 					checkMyMoney();
-				}else {
-					Toast.makeText(getActivity(),"请先登录",Toast.LENGTH_SHORT).show();
+				} else {
+					Toast.makeText(getActivity(), "请先登录", Toast.LENGTH_SHORT).show();
 					userLogin();
 				}
 			}
@@ -99,6 +139,22 @@ public class MeFrgment extends Fragment {
 			@Override
 			public void onClick(View view) {
 				showAdviceActivity();
+			}
+		});
+		logoutBtn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				AlertDialog.Builder isExitLog = new AlertDialog.Builder(getActivity());
+				isExitLog.setTitle("提示")
+						.setMessage("确定退出登录？")
+						.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialogInterface, int i) {
+								changeToUnLogin();
+							}
+						})
+						.setNegativeButton("取消", null)
+						.show();
 			}
 		});
 	}
@@ -149,6 +205,9 @@ public class MeFrgment extends Fragment {
 		switch (requestCode){
 			case 1:
 				//处理LoginActivity返回的信息
+				if (resultCode == 200){
+					changeToLogin();
+				}
 		}
 	}
 
@@ -166,6 +225,9 @@ public class MeFrgment extends Fragment {
 		MyFavoriteLy = (LinearLayout) view.findViewById(R.id.MyFavoriteLy);
 		MyParkingLy = (LinearLayout) view.findViewById(R.id.MyParkingLy);
 		MyAdvice = (LinearLayout) view.findViewById(R.id.MyAdvice);
+		logoutBtn = (Button) view.findViewById(R.id.logoutBtn);
+
+		editor = getActivity().getSharedPreferences("ParkingApp", Context.MODE_PRIVATE).edit();
 
 	}
 }

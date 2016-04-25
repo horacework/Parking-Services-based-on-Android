@@ -20,7 +20,6 @@ public class ParkingApp extends Application {
     // 写
     public static SharedPreferences.Editor sEditor;
 
-    public String userIdTemp;
 
     @Override
     public void onCreate() {
@@ -31,11 +30,14 @@ public class ParkingApp extends Application {
         //读取SharePreference内数据到全局
         sPreferences = getSharedPreferences("ParkingApp", MODE_PRIVATE);
         //sEditor = sPreferences.edit();
-        userIdTemp = sPreferences.getString("userId","");
+        String userIdTemp = sPreferences.getString("userId", "");
+        String userNameTemp = sPreferences.getString("userName","");
         if (userIdTemp.equals("")){
             LocalHost.INSTANCE.setUserid(null);
+            LocalHost.INSTANCE.setUserName(null);
         }else {
             LocalHost.INSTANCE.setUserid(userIdTemp);
+            LocalHost.INSTANCE.setUserName(userNameTemp);
         }
 
         APP_CONTEXT=getApplicationContext();
