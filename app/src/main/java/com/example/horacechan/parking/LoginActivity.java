@@ -1,14 +1,26 @@
 package com.example.horacechan.parking;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.telephony.TelephonyManager;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class LoginActivity extends ActionBarActivity {
+import com.example.horacechan.parking.api.LocalHost;
+import com.example.horacechan.parking.api.http.base.BaseResponse;
+import com.example.horacechan.parking.api.http.base.BaseResponseListener;
+import com.example.horacechan.parking.api.http.request.LoginRequest;
+import com.example.horacechan.parking.api.model.UserEntity;
+import com.example.horacechan.parking.util.MD5Utils;
+
+public class LoginActivity extends ActionBarActivity implements BaseResponseListener {
 
     EditText Login_username;
     EditText Login_password1;
@@ -20,16 +32,37 @@ public class LoginActivity extends ActionBarActivity {
 
     //状态码，true表示当前在登录页，false表示当前在注册页
     boolean LoginOrSignup = true;
+    String deviceId;
+
+    //请求
+    LoginRequest mLoginRequest;
+
+    //SharePreference
+    SharedPreferences.Editor ShareEditor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        //获取设备ID
+        deviceId = getImieStatus();
+        ShareEditor = getSharedPreferences("ParkingApp",MODE_PRIVATE).edit();
+
         initWeight();
+
+        //Login请求初始化
+        mLoginRequest = new LoginRequest();
+        mLoginRequest.setOnResponseListener(this);
+        mLoginRequest.setRequestType(0);
 
         initOnCilckListener();
 
+    }
+
+    private String getImieStatus() {
+        TelephonyManager tm = (TelephonyManager)this.getSystemService(Context.TELEPHONY_SERVICE);
+        return tm.getDeviceId();
     }
 
     private void initOnCilckListener() {
@@ -60,7 +93,10 @@ public class LoginActivity extends ActionBarActivity {
                     //登录
                     if (checkUsername(username,regEx,20) && checkPassword(password,regEx,20)){
                         //TODO:发送登录请求
-                        
+                        mLoginRequest.username = username;
+                        mLoginRequest.password = MD5Utils.getMD5(password);
+                        mLoginRequest.deviceId = deviceId;
+                        mLoginRequest.execute();
                         Toast.makeText(getApplication(), "登录啦啦啦啦", Toast.LENGTH_SHORT).show();
                     }
                 } else {
@@ -69,6 +105,7 @@ public class LoginActivity extends ActionBarActivity {
                         Toast.makeText(getApplication(), "两次密码必须一致", Toast.LENGTH_SHORT).show();
                     }else if (checkUsername(username,regEx,20) && checkPassword(password,regEx,20)){
                         //TODO：发送注册请求
+
                         Toast.makeText(getApplication(), "注册啦啦啦啦", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -114,5 +151,49 @@ public class LoginActivity extends ActionBarActivity {
         Login_password2 = (EditText) findViewById(R.id.Login_password2);
         Login_login_btn = (Button) findViewById(R.id.Login_login_btn);
         Login_exchange_btn = (TextView) findViewById(R.id.Login_exchange_btn);
+    }
+
+    @Override
+    public void onStart(BaseResponse response) {
+
+    }
+
+    @Override
+    public void onFailure(BaseResponse response) {
+        Toast.makeText(this, "请求失败", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onSuccess(BaseResponse response) {
+        if (response.getStatus() == 200){
+            switch (response.getRequestType()){
+                case 0://发送登录请求
+                    UserEntity user = (UserEntity) response.getData();
+                    //设置全局userID
+                    LocalHost.INSTANCE.setUserid(user.getId());
+                    //数据持久化到SharePreference中
+                    ShareEditor.putString("userId",user.getId());
+                    ShareEditor.putString("userName",user.getName());
+                    //给上一个Activity返回userID
+                    Intent intent = new Intent();
+                    intent.putExtra("userId",user.getId());
+                    intent.putExtra("userName",user.getName());
+                    setResult(200, intent);
+                    finish();
+            }
+        }else if (response.getStatus()==404){
+            Toast.makeText(this, response.getMsg(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK ) {
+            //返回键监听
+            setResult(404);
+            finish();
+        }
+        return false;
+
     }
 }
