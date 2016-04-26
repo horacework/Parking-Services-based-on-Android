@@ -1,10 +1,8 @@
 package com.example.horacechan.parking;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.telephony.TelephonyManager;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -18,6 +16,7 @@ import com.example.horacechan.parking.api.http.base.BaseResponseListener;
 import com.example.horacechan.parking.api.http.request.LoginRequest;
 import com.example.horacechan.parking.api.http.request.SignupRequest;
 import com.example.horacechan.parking.api.model.UserEntity;
+import com.example.horacechan.parking.util.DeviceUtils;
 import com.example.horacechan.parking.util.MD5Utils;
 
 public class LoginActivity extends ActionBarActivity implements BaseResponseListener {
@@ -47,7 +46,7 @@ public class LoginActivity extends ActionBarActivity implements BaseResponseList
         setContentView(R.layout.activity_login);
 
         //获取设备ID
-        deviceId = getImieStatus();
+        deviceId = DeviceUtils.getImieStatus(this);
         ShareEditor = getSharedPreferences("ParkingApp",MODE_PRIVATE).edit();
 
         initWeight();
@@ -63,11 +62,6 @@ public class LoginActivity extends ActionBarActivity implements BaseResponseList
 
         initOnCilckListener();
 
-    }
-
-    private String getImieStatus() {
-        TelephonyManager tm = (TelephonyManager)this.getSystemService(Context.TELEPHONY_SERVICE);
-        return tm.getDeviceId();
     }
 
     private void initOnCilckListener() {

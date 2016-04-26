@@ -16,8 +16,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.horacechan.parking.api.LocalHost;
+import com.example.horacechan.parking.api.http.base.BaseResponse;
+import com.example.horacechan.parking.api.http.base.BaseResponseListener;
+import com.example.horacechan.parking.api.http.request.LogoutRequest;
+import com.example.horacechan.parking.util.DeviceUtils;
 
-public class MeFrgment extends Fragment {
+public class MeFrgment extends Fragment implements BaseResponseListener {
 
 	Button loginBtn;
 	LinearLayout userInfoLy;
@@ -36,6 +40,8 @@ public class MeFrgment extends Fragment {
 	String isLoginUserId = null;
 	String isLoginUserName = null;
 	String isLoginUserState = null;
+
+	LogoutRequest mLogoutRequest;
 
 	SharedPreferences.Editor editor;
 
@@ -56,6 +62,7 @@ public class MeFrgment extends Fragment {
 		return view;
 	}
 
+	//处理登录成功之后的操作
 	private void changeToLogin() {
 
 		loginBtn.setVisibility(View.GONE);
@@ -69,7 +76,16 @@ public class MeFrgment extends Fragment {
 		//TODO: 更新金额与当前车牌
 	}
 
+	//处理退出登录之后操作
 	private void changeToUnLogin() {
+		//向服务发送退出登录请求
+		mLogoutRequest = new LogoutRequest();
+		mLogoutRequest.setOnResponseListener(this);
+		mLogoutRequest.setRequestType(0);
+		mLogoutRequest.userId = isLoginUserId;
+		mLogoutRequest.deviceId = DeviceUtils.getImieStatus(getActivity());
+		mLogoutRequest.post();
+		//不管退出请求有没有成功，客户端也会强行退出
 		//清空本地变量
 		isLoginUserName = null;
 		isLoginUserId = null;
@@ -229,5 +245,27 @@ public class MeFrgment extends Fragment {
 
 		editor = getActivity().getSharedPreferences("ParkingApp", Context.MODE_PRIVATE).edit();
 
+	}
+
+	@Override
+	public void onStart(BaseResponse response) {
+
+	}
+
+	@Override
+	public void onFailure(BaseResponse response) {
+		Toast.makeText(getActivity(), "请求失败", Toast.LENGTH_SHORT).show();
+	}
+
+	@Override
+	public void onSuccess(BaseResponse response) {
+		if (response.getStatus()==200){
+			switch (response.getRequestType()){
+				case 0:
+					Toast.makeText(getActivity(), response.getMsg(), Toast.LENGTH_LONG).show();
+			}
+		}else if (response.getStatus()==404){
+			Toast.makeText(getActivity(), response.getMsg(), Toast.LENGTH_LONG).show();
+		}
 	}
 }
