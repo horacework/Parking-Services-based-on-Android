@@ -72,10 +72,12 @@ public class LoginActivity extends ActionBarActivity implements BaseResponseList
                 if (LoginOrSignup) {
                     Login_password2.setVisibility(View.VISIBLE);
                     Login_login_btn.setText("注册");
+                    Login_exchange_btn.setText("转到登录>>>");
                     LoginOrSignup = false;
                 } else {
                     Login_password2.setVisibility(View.GONE);
                     Login_login_btn.setText("登录");
+                    Login_exchange_btn.setText("转到注册>>>");
                     LoginOrSignup = true;
                 }
 

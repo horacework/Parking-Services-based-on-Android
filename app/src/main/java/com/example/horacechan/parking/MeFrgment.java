@@ -19,6 +19,8 @@ import com.example.horacechan.parking.api.LocalHost;
 import com.example.horacechan.parking.api.http.base.BaseResponse;
 import com.example.horacechan.parking.api.http.base.BaseResponseListener;
 import com.example.horacechan.parking.api.http.request.LogoutRequest;
+import com.example.horacechan.parking.api.http.request.MoneyRemainRequest;
+import com.example.horacechan.parking.api.model.UsermoneyEntity;
 import com.example.horacechan.parking.util.DeviceUtils;
 
 public class MeFrgment extends Fragment implements BaseResponseListener {
@@ -42,6 +44,7 @@ public class MeFrgment extends Fragment implements BaseResponseListener {
 	String isLoginUserState = null;
 
 	LogoutRequest mLogoutRequest;
+	MoneyRemainRequest mMoneyRemainRequest;
 
 	SharedPreferences.Editor editor;
 
@@ -74,6 +77,11 @@ public class MeFrgment extends Fragment implements BaseResponseListener {
 		userInfoLy.setVisibility(View.VISIBLE);
 		logoutBtn.setVisibility(View.VISIBLE);
 		//TODO: 更新金额与当前车牌
+		mMoneyRemainRequest = new MoneyRemainRequest();
+		mMoneyRemainRequest.setOnResponseListener(this);
+		mMoneyRemainRequest.setRequestType(1);
+		mMoneyRemainRequest.userId = isLoginUserId;
+		mMoneyRemainRequest.execute();
 	}
 
 	//处理退出登录之后操作
@@ -224,6 +232,7 @@ public class MeFrgment extends Fragment implements BaseResponseListener {
 				if (resultCode == 200){
 					changeToLogin();
 				}
+				break;
 		}
 	}
 
@@ -263,6 +272,13 @@ public class MeFrgment extends Fragment implements BaseResponseListener {
 			switch (response.getRequestType()){
 				case 0:
 					Toast.makeText(getActivity(), response.getMsg(), Toast.LENGTH_LONG).show();
+					break;
+				case 1:
+					//显示当前用户余额
+					UsermoneyEntity usermoneyEntity = (UsermoneyEntity) response.getData();
+					MyMoneyRemain.setText(usermoneyEntity.getRemain() + "元");
+					//Toast.makeText(getActivity(), usermoneyEntity.getUserId(), Toast.LENGTH_LONG).show();
+					MyMoneyRemain.setVisibility(View.VISIBLE);
 			}
 		}else if (response.getStatus()==404){
 			Toast.makeText(getActivity(), response.getMsg(), Toast.LENGTH_LONG).show();
