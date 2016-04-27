@@ -209,8 +209,9 @@ public class MeFrgment extends Fragment implements BaseResponseListener {
 	}
 
 	private void checkMyMoney() {
-		//TODO:新Activity，金额变动记录
-		Toast.makeText(getActivity(),"正在建设中",Toast.LENGTH_SHORT).show();
+		Intent intent = new Intent(getActivity(),MoneylogActivity.class);
+		startActivity(intent);
+
 	}
 
 	private void userStateInfo() {

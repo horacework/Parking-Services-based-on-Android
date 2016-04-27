@@ -53,7 +53,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".NaviActivity" />
-        <activity android:name=".LoginActivity"></activity>
+        <activity android:name=".LoginActivity" />
+        <activity android:name=".MoneylogActivity"></activity>
     </application>
 
 </manifest>

@@ -54,11 +54,11 @@ public class BaseResponse {
         this.msg = msg;
     }
 
-    public ArrayList<?> getDatas() {
+    public ArrayList<?> getArrayList() {
         return datas;
     }
 
-    public void setDatas(List<?> datas) {
+    public void setArrayList(List<?> datas) {
         this.datas.clear();
         this.datas.addAll(datas);
     }

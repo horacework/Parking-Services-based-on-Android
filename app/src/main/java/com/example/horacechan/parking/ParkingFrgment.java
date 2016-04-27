@@ -411,7 +411,7 @@ public class ParkingFrgment extends Fragment implements LocationSource, AMapLoca
                     mMarkerInfoLy.setVisibility(View.VISIBLE);
                     break;
                 case 1:
-                    List<MarkId> AllMarkerId = (List<MarkId>) response.getDatas();
+                    List<MarkId> AllMarkerId = (List<MarkId>) response.getArrayList();
                     addOverlays(AllMarkerId);
             }
 
