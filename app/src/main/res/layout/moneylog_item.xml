@@ -3,13 +3,13 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_item"
     android:padding="20dp">
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1">
+        android:orientation="vertical"
+        android:layout_weight="1.5">
         <TextView
             android:id="@+id/itemType"
             android:layout_width="wrap_content"
@@ -18,13 +18,19 @@
             android:textColor="@android:color/black"
             android:textSize="25sp"
             android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/itemTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="时间：2016年12月22日"/>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:gravity="right">
+        android:gravity="right"
+        android:orientation="vertical">
         <TextView
             android:id="@+id/itemNum"
             android:layout_width="wrap_content"
@@ -32,6 +38,12 @@
             android:textColor="@android:color/black"
             android:text="10元"
             android:textSize="20dp"/>
+        <TextView
+            android:id="@+id/itemRemain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="当前剩余：10元"/>
     </LinearLayout>
 
 

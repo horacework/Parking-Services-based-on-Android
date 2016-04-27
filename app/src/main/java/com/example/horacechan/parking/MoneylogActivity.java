@@ -61,9 +61,6 @@ public class MoneylogActivity extends ActionBarActivity implements BaseResponseL
                     datas.clear();
                     datas.addAll(info);
                     adapter.notifyDataSetChanged();
-
-
-                    Toast.makeText(this, "数据返回成功", Toast.LENGTH_LONG).show();
                     break;
             }
         }else if (response.getStatus()==404){

@@ -52,8 +52,20 @@ public class MoneyLogAdapter extends BaseAdapter {
         }
 
 
-        vh.mPay.setText(getItem(i).getType()==1?"支出":"充值");
+        switch (getItem(i).getType()){
+            case 1:
+                vh.mPay.setText("支出");
+                break;
+            case 2:
+                vh.mPay.setText("充值");
+                break;
+            default:
+                vh.mPay.setText("未知");
+        }
+        //vh.mPay.setText(getItem(i).getType()==1?"支出":"充值");
         vh.mMoney.setText(getItem(i).getFigure()+"元");
+        vh.mRemain.setText("当期余额："+getItem(i).getRemain());
+        vh.mTime.setText(getItem(i).getCurrentTime());
 
 
 
@@ -64,10 +76,15 @@ public class MoneyLogAdapter extends BaseAdapter {
     static class ViewHolder{
         public TextView mPay;
         public TextView mMoney;
+        public TextView mRemain;
+        public TextView mTime;
 
         public ViewHolder(View v) {
-            mPay= (TextView) v.findViewById(R.id.itemType);
-            mMoney= (TextView) v.findViewById(R.id.itemNum);
+            mPay = (TextView) v.findViewById(R.id.itemType);
+            mMoney = (TextView) v.findViewById(R.id.itemNum);
+            mRemain = (TextView) v.findViewById(R.id.itemRemain);
+            mTime = (TextView) v.findViewById(R.id.itemTime);
+
         }
     }
 
