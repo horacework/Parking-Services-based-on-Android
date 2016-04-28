@@ -203,7 +203,8 @@ public class MeFrgment extends Fragment implements BaseResponseListener {
 
 	private void showAdviceActivity() {
 		//TODO:新Activity，弹出反馈意见Activity
-		Toast.makeText(getActivity(),"正在建设中",Toast.LENGTH_SHORT).show();
+		Intent intent = new Intent(getActivity(),MyAdviceActivity.class);
+		startActivity(intent);
 	}
 
 	private void myParkingLog() {

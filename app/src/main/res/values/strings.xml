@@ -36,5 +36,10 @@
     <string name="Login_login_btn">登录</string>
     <string name="Login_chanceTosignup_text"><![CDATA[转到注册>>>]]></string>
     <string name="title_activity_my_car">我的车牌</string>
+    <string name="title_activity_my_car_add">新增您的车牌</string>
+    <string name="title_activity_navi">正在为你导航</string>
+    <string name="title_activity_login">登录或注册</string>
+    <string name="title_activity_my_moneylog">您的金额记录</string>
+    <string name="title_activity_my_advice">意见反馈</string>
 
 </resources>

@@ -52,13 +52,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".NaviActivity" />
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".MyMoneylogActivity" />
+        <activity
+            android:name=".NaviActivity"
+            android:label="@string/title_activity_navi" />
+        <activity
+            android:name=".LoginActivity"
+            android:label="@string/title_activity_login" />
+        <activity
+            android:name=".MyMoneylogActivity"
+            android:label="@string/title_activity_my_moneylog" />
         <activity
             android:name=".MyCarActivity"
             android:label="@string/title_activity_my_car" />
-        <activity android:name=".MyCarAddActivity"></activity>
+        <activity
+            android:name=".MyCarAddActivity"
+            android:label="@string/title_activity_my_car_add" />
+        <activity
+            android:name=".MyAdviceActivity"
+            android:label="@string/title_activity_my_advice"></activity>
     </application>
 
 </manifest>
