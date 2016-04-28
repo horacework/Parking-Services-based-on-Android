@@ -32,6 +32,7 @@ public class ParkingApp extends Application {
         //sEditor = sPreferences.edit();
         String userIdTemp = sPreferences.getString("userId", "");
         String userNameTemp = sPreferences.getString("userName","");
+        String userCarTemp = sPreferences.getString("userCar","");
         if (userIdTemp.equals("")){
             LocalHost.INSTANCE.setUserid(null);
             LocalHost.INSTANCE.setUserName(null);
@@ -39,6 +40,8 @@ public class ParkingApp extends Application {
             LocalHost.INSTANCE.setUserid(userIdTemp);
             LocalHost.INSTANCE.setUserName(userNameTemp);
         }
+        LocalHost.INSTANCE.setUserCar(userCarTemp);
+
 
         APP_CONTEXT=getApplicationContext();
         VolleyManager.INSTANCE.initQueue(10<<10<<10);

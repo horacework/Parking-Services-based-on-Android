@@ -20,6 +20,9 @@ public enum  LocalHost {
     public String getUserName(){
         return sHostInfo.getUsername();
     }
+    public String getUserCar(){
+        return sHostInfo.getUserCar();
+    }
 
     public void setUserid(String id){
         sHostInfo.setId(id);
@@ -27,11 +30,26 @@ public enum  LocalHost {
     public void setUserName(String userName){
         sHostInfo.setUsername(userName);
     }
+    public void setUserCar(String userCar){
+        sHostInfo.setUserCar(userCar);
+    }
 
     static class HostInfo{
         private String id;
 
         private String username;
+
+        private String userCar;
+
+
+        public String getUserCar() {
+            return userCar;
+        }
+
+        public void setUserCar(String userCar) {
+            this.userCar = userCar;
+        }
+
 
         public String getId() {
             return id;

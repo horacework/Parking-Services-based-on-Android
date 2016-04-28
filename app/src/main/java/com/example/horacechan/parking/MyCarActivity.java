@@ -1,9 +1,11 @@
 package com.example.horacechan.parking;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -39,6 +41,8 @@ public class MyCarActivity extends ActionBarActivity implements BaseResponseList
         adapter = new UserCarListAdapter(this,datas);
         MyCaritem.setAdapter(adapter);
 
+        itemOnClickListener();
+
         carListRequestShow();
 
         addCarBtn.setOnClickListener(new View.OnClickListener() {
@@ -49,6 +53,23 @@ public class MyCarActivity extends ActionBarActivity implements BaseResponseList
             }
         });
 
+    }
+
+    private void itemOnClickListener() {
+        MyCaritem.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                UserCarEntity userCarEntity = datas.get(i);
+                //持久化存储
+                SharedPreferences.Editor editor = getSharedPreferences("ParkingApp", MODE_PRIVATE).edit();
+                editor.putString("userCar",userCarEntity.getPlate());
+                editor.apply();
+                //全局变量
+                LocalHost.INSTANCE.setUserCar(userCarEntity.getPlate());
+                setResult(200);
+                finish();
+            }
+        });
     }
 
     private void carListRequestShow() {

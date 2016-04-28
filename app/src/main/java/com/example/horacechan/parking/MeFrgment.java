@@ -41,6 +41,7 @@ public class MeFrgment extends Fragment implements BaseResponseListener {
 
 	String isLoginUserId = null;
 	String isLoginUserName = null;
+	String isLoginUserCar = null;
 	String isLoginUserState = null;
 
 	LogoutRequest mLogoutRequest;
@@ -71,12 +72,21 @@ public class MeFrgment extends Fragment implements BaseResponseListener {
 		loginBtn.setVisibility(View.GONE);
 		isLoginUserId = LocalHost.INSTANCE.getUserid();
 		isLoginUserName = LocalHost.INSTANCE.getUserName();
+		isLoginUserCar = LocalHost.INSTANCE.getUserCar();
 		userName.setText(isLoginUserName);
 		//TODO: 发送请求当前有没有车子在停车并显示
 		userState.setText("当前没有车子在停车场停车");
 		userInfoLy.setVisibility(View.VISIBLE);
 		logoutBtn.setVisibility(View.VISIBLE);
-		//TODO: 更新金额与当前车牌
+		//更新车牌
+		if (isLoginUserCar.equals("")){
+			Toast.makeText(getActivity(),"请设置您的车牌",Toast.LENGTH_LONG).show();
+			MyCarNum.setText("点击设置");
+		}else {
+			MyCarNum.setText(isLoginUserCar);
+		}
+		MyCarNum.setVisibility(View.VISIBLE);
+		//更新金额
 		mMoneyRemainRequest = new MoneyRemainRequest();
 		mMoneyRemainRequest.setOnResponseListener(this);
 		mMoneyRemainRequest.setRequestType(1);
@@ -97,16 +107,20 @@ public class MeFrgment extends Fragment implements BaseResponseListener {
 		//清空本地变量
 		isLoginUserName = null;
 		isLoginUserId = null;
+		isLoginUserCar = "";
 		//清空全局变量
 		LocalHost.INSTANCE.setUserid(null);
 		LocalHost.INSTANCE.setUserName(null);
+		LocalHost.INSTANCE.setUserCar("");
 		//清空SharePreference
 		editor.remove("userId");
 		editor.remove("userName");
+		editor.remove("userCar");
 		editor.commit();
 		//布局操作
 		userInfoLy.setVisibility(View.GONE);
 		logoutBtn.setVisibility(View.GONE);
+		MyCarNum.setVisibility(View.GONE);
 		loginBtn.setVisibility(View.VISIBLE);
 	}
 
@@ -130,7 +144,6 @@ public class MeFrgment extends Fragment implements BaseResponseListener {
 				if (isLoginUserName != null) {
 					checkMyMoney();
 				} else {
-					Toast.makeText(getActivity(), "请先登录", Toast.LENGTH_SHORT).show();
 					userLogin();
 				}
 			}
@@ -138,7 +151,12 @@ public class MeFrgment extends Fragment implements BaseResponseListener {
 		MyCarLy.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				setMyCar();
+				if (isLoginUserId != null){
+					setMyCar();
+				}else {
+					userLogin();
+				}
+
 			}
 		});
 		MyOrderLy.setOnClickListener(new View.OnClickListener() {
@@ -205,7 +223,7 @@ public class MeFrgment extends Fragment implements BaseResponseListener {
 
 	private void setMyCar() {
 		Intent intent = new Intent(getActivity(),MyCarActivity.class);
-		startActivityForResult(intent,2);
+		startActivityForResult(intent, 2);
 	}
 
 	private void checkMyMoney() {
@@ -220,6 +238,7 @@ public class MeFrgment extends Fragment implements BaseResponseListener {
 	}
 
 	private void userLogin() {
+		Toast.makeText(getActivity(), "请先登录", Toast.LENGTH_SHORT).show();
 		Intent intent = new Intent(getActivity(),LoginActivity.class);
 		startActivityForResult(intent,1);
 	}
@@ -232,6 +251,11 @@ public class MeFrgment extends Fragment implements BaseResponseListener {
 				//处理LoginActivity返回的信息
 				if (resultCode == 200){
 					changeToLogin();
+				}
+				break;
+			case 2:
+				if (resultCode == 200){
+					MyCarNum.setText(LocalHost.INSTANCE.getUserCar());
 				}
 				break;
 		}
@@ -280,6 +304,8 @@ public class MeFrgment extends Fragment implements BaseResponseListener {
 					MyMoneyRemain.setText(usermoneyEntity.getRemain() + "元");
 					//Toast.makeText(getActivity(), usermoneyEntity.getUserId(), Toast.LENGTH_LONG).show();
 					MyMoneyRemain.setVisibility(View.VISIBLE);
+
+
 			}
 		}else if (response.getStatus()==404){
 			Toast.makeText(getActivity(), response.getMsg(), Toast.LENGTH_LONG).show();
