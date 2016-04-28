@@ -204,12 +204,12 @@ public class MeFrgment extends Fragment implements BaseResponseListener {
 	}
 
 	private void setMyCar() {
-		//TODO:新Activity，设置使用车牌。添加我的车牌
-		Toast.makeText(getActivity(),"正在建设中",Toast.LENGTH_SHORT).show();
+		Intent intent = new Intent(getActivity(),MyCarActivity.class);
+		startActivityForResult(intent,2);
 	}
 
 	private void checkMyMoney() {
-		Intent intent = new Intent(getActivity(),MoneylogActivity.class);
+		Intent intent = new Intent(getActivity(),MyMoneylogActivity.class);
 		startActivity(intent);
 
 	}

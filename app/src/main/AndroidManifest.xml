@@ -54,7 +54,11 @@
         </activity>
         <activity android:name=".NaviActivity" />
         <activity android:name=".LoginActivity" />
-        <activity android:name=".MoneylogActivity"></activity>
+        <activity android:name=".MyMoneylogActivity" />
+        <activity
+            android:name=".MyCarActivity"
+            android:label="@string/title_activity_my_car" />
+        <activity android:name=".MyCarAddActivity"></activity>
     </application>
 
 </manifest>

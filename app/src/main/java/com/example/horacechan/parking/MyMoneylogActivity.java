@@ -10,18 +10,18 @@ import com.example.horacechan.parking.api.http.base.BaseResponse;
 import com.example.horacechan.parking.api.http.base.BaseResponseListener;
 import com.example.horacechan.parking.api.http.request.MoneyLogRequest;
 import com.example.horacechan.parking.api.model.UsermoneyEntity;
-import com.example.horacechan.parking.util.MoneyLogAdapter;
+import com.example.horacechan.parking.util.UserMoneyLogAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MoneylogActivity extends ActionBarActivity implements BaseResponseListener {
+public class MyMoneylogActivity extends ActionBarActivity implements BaseResponseListener {
 
     MoneyLogRequest moneyLogRequest;
     ListView moneyLogList;
 
     private List<UsermoneyEntity> datas;
-    private MoneyLogAdapter adapter;
+    private UserMoneyLogAdapter adapter;
 
 
 
@@ -32,7 +32,7 @@ public class MoneylogActivity extends ActionBarActivity implements BaseResponseL
 
         moneyLogList = (ListView) findViewById(R.id.moneyLogList);
         datas=new ArrayList<>();
-        adapter=new MoneyLogAdapter(this,datas);
+        adapter=new UserMoneyLogAdapter(this,datas);
         moneyLogList.setAdapter(adapter);
 
         moneyLogRequest = new MoneyLogRequest();

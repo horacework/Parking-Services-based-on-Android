@@ -35,5 +35,6 @@
     <string name="Login_enterPassword2_hint">再次确认密码</string>
     <string name="Login_login_btn">登录</string>
     <string name="Login_chanceTosignup_text"><![CDATA[转到注册>>>]]></string>
+    <string name="title_activity_my_car">我的车牌</string>
 
 </resources>

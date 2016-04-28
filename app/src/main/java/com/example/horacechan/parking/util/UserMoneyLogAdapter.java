@@ -13,13 +13,13 @@ import com.example.horacechan.parking.api.model.UsermoneyEntity;
 import java.util.List;
 
 
-public class MoneyLogAdapter extends BaseAdapter {
+public class UserMoneyLogAdapter extends BaseAdapter {
 
     private List<UsermoneyEntity> datas;
     private Context context;
     private LayoutInflater mInflate;
 
-    public MoneyLogAdapter(Context context, List<UsermoneyEntity> datas) {
+    public UserMoneyLogAdapter(Context context, List<UsermoneyEntity> datas) {
         this.context = context;
         this.datas = datas;
         mInflate=LayoutInflater.from(context);
