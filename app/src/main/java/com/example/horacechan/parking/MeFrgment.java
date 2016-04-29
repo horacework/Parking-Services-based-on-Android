@@ -257,6 +257,8 @@ public class MeFrgment extends Fragment implements BaseResponseListener {
 			case 2:
 				if (resultCode == 200){
 					MyCarNum.setText(LocalHost.INSTANCE.getUserCar());
+				}else if (resultCode == 300){
+					MyCarNum.setText("未设置车牌");
 				}
 				break;
 		}
