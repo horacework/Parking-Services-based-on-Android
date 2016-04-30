@@ -41,5 +41,6 @@
     <string name="title_activity_login">登录或注册</string>
     <string name="title_activity_my_moneylog">您的金额记录</string>
     <string name="title_activity_my_advice">意见反馈</string>
+    <string name="title_activity_my_parkinglog">停车记录</string>
 
 </resources>

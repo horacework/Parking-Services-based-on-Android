@@ -69,7 +69,10 @@
             android:label="@string/title_activity_my_car_add" />
         <activity
             android:name=".MyAdviceActivity"
-            android:label="@string/title_activity_my_advice"></activity>
+            android:label="@string/title_activity_my_advice" />
+        <activity
+            android:name=".MyParkinglogActivity"
+            android:label="@string/title_activity_my_parkinglog"></activity>
     </application>
 
 </manifest>

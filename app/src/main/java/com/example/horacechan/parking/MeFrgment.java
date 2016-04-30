@@ -141,7 +141,7 @@ public class MeFrgment extends Fragment implements BaseResponseListener {
 		MyMoneyLy.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				if (isLoginUserName != null) {
+				if (isLoginUserId != null) {
 					checkMyMoney();
 				} else {
 					userLogin();
@@ -174,7 +174,12 @@ public class MeFrgment extends Fragment implements BaseResponseListener {
 		MyParkingLy.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				myParkingLog();
+				if (isLoginUserId != null){
+					myParkingLog();
+				}else {
+					userLogin();
+				}
+
 			}
 		});
 		MyAdvice.setOnClickListener(new View.OnClickListener() {
@@ -202,14 +207,13 @@ public class MeFrgment extends Fragment implements BaseResponseListener {
 	}
 
 	private void showAdviceActivity() {
-		//TODO:新Activity，弹出反馈意见Activity
 		Intent intent = new Intent(getActivity(),MyAdviceActivity.class);
 		startActivity(intent);
 	}
 
 	private void myParkingLog() {
-		//TODO:新Activity，列出我的停车记录
-		Toast.makeText(getActivity(),"正在建设中",Toast.LENGTH_SHORT).show();
+		Intent intent = new Intent(getActivity(),MyParkinglogActivity.class);
+		startActivity(intent);
 	}
 
 	private void checkMyFavorite() {
