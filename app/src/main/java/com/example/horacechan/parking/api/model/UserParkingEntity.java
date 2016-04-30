@@ -2,26 +2,19 @@ package com.example.horacechan.parking.api.model;
 
 public class UserParkingEntity {
 
-
     /**
      * logId : bad5ee26-0ea0-11e6-969e-00ff9099da81
-     * userId : bfd083b6-9179-4c99-81ee-2713bc2a463c
-     * carId : 0a9a5764-f36f-4450-8a36-f721ed4dae2b
-     * markerId : b4850fda-047b-11e6-b034-00ff9099da81
      * enterTime : Apr 30, 2016 6:13:07 AM
      * leaveTime : Apr 30, 2016 11:19:13 AM
-     * isOrder : 0
-     * isComplete : 1
+     * plate : 粤A 14444
+     * name : 广工大停车场
      */
 
     private String logId;
-    private String userId;
-    private String carId;
-    private String markerId;
     private String enterTime;
     private String leaveTime;
-    private int isOrder;
-    private int isComplete;
+    private String plate;
+    private String name;
 
     public String getLogId() {
         return logId;
@@ -29,30 +22,6 @@ public class UserParkingEntity {
 
     public void setLogId(String logId) {
         this.logId = logId;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getCarId() {
-        return carId;
-    }
-
-    public void setCarId(String carId) {
-        this.carId = carId;
-    }
-
-    public String getMarkerId() {
-        return markerId;
-    }
-
-    public void setMarkerId(String markerId) {
-        this.markerId = markerId;
     }
 
     public String getEnterTime() {
@@ -71,19 +40,19 @@ public class UserParkingEntity {
         this.leaveTime = leaveTime;
     }
 
-    public int getIsOrder() {
-        return isOrder;
+    public String getPlate() {
+        return plate;
     }
 
-    public void setIsOrder(int isOrder) {
-        this.isOrder = isOrder;
+    public void setPlate(String plate) {
+        this.plate = plate;
     }
 
-    public int getIsComplete() {
-        return isComplete;
+    public String getName() {
+        return name;
     }
 
-    public void setIsComplete(int isComplete) {
-        this.isComplete = isComplete;
+    public void setName(String name) {
+        this.name = name;
     }
 }
