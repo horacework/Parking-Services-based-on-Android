@@ -11,7 +11,6 @@
     tools:context="com.example.horacechan.parking.MyCarActivity">
 
     <ListView
-        android:visibility="visible"
         android:id="@+id/MyCaritem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -28,5 +27,13 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
+    <TextView
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="点击即可一键导航，长按可删除该收藏"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>

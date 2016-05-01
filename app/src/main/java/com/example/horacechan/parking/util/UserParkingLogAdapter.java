@@ -8,8 +8,6 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.example.horacechan.parking.R;
-import com.example.horacechan.parking.api.http.request.CarNameRequest;
-import com.example.horacechan.parking.api.http.request.GetMarkRequest;
 import com.example.horacechan.parking.api.model.UserParkingEntity;
 
 import java.util.List;
@@ -20,10 +18,6 @@ public class UserParkingLogAdapter extends BaseAdapter {
     private List<UserParkingEntity> datas;
     private Context context;
     private LayoutInflater mInflate;
-
-    private GetMarkRequest getMarkRequest;
-
-    private CarNameRequest carNameRequest;
 
     public UserParkingLogAdapter(Context context, List<UserParkingEntity> datas) {
         this.context = context;

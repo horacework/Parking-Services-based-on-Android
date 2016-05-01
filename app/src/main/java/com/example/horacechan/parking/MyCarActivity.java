@@ -25,10 +25,10 @@ import java.util.List;
 
 public class MyCarActivity extends ActionBarActivity implements BaseResponseListener {
 
-    private ListView MyCaritem;
-    private CarListRequest carListRequest;
-    private CarDeleteRequest carDeleteRequest;
-    private Button addCarBtn;
+    ListView MyCaritem;
+    CarListRequest carListRequest;
+    CarDeleteRequest carDeleteRequest;
+    Button addCarBtn;
 
     private List<UserCarEntity> datas;
     private UserCarListAdapter adapter;

@@ -7,15 +7,24 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.horacechan.parking.MyParkinglogActivity">
+    tools:context="com.example.horacechan.parking.MyFavoriteActivity">
 
     <ListView
-        android:id="@+id/parkingLogList"
+        android:id="@+id/favoriteList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:divider="@android:color/darker_gray"
-        android:dividerHeight="1dp">
-
+        android:divider="@android:color/transparent"
+        android:dividerHeight="10dp">
     </ListView>
+
+    <TextView
+        android:gravity="center"
+        android:background="#EEEEEE"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="点击即可一键导航，长按可删除该收藏"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>

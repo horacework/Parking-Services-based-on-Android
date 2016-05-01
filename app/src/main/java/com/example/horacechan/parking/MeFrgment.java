@@ -168,7 +168,11 @@ public class MeFrgment extends Fragment implements BaseResponseListener {
 		MyFavoriteLy.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				checkMyFavorite();
+				if (isLoginUserId != null){
+					checkMyFavorite();
+				}else {
+					userLogin();
+				}
 			}
 		});
 		MyParkingLy.setOnClickListener(new View.OnClickListener() {
@@ -179,7 +183,6 @@ public class MeFrgment extends Fragment implements BaseResponseListener {
 				}else {
 					userLogin();
 				}
-
 			}
 		});
 		MyAdvice.setOnClickListener(new View.OnClickListener() {
@@ -217,8 +220,8 @@ public class MeFrgment extends Fragment implements BaseResponseListener {
 	}
 
 	private void checkMyFavorite() {
-		//TODO:新Activity，查看我点过赞的停车场记录，顺便可以一键导航
-		Toast.makeText(getActivity(),"正在建设中",Toast.LENGTH_SHORT).show();
+		Intent intent = new Intent(getActivity(),MyFavoriteActivity.class);
+		startActivity(intent);
 	}
 
 	private void checkMyOrder() {

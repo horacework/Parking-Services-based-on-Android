@@ -72,7 +72,10 @@
             android:label="@string/title_activity_my_advice" />
         <activity
             android:name=".MyParkinglogActivity"
-            android:label="@string/title_activity_my_parkinglog"></activity>
+            android:label="@string/title_activity_my_parkinglog" />
+        <activity
+            android:name=".MyFavoriteActivity"
+            android:label="@string/title_activity_my_favorite"></activity>
     </application>
 
 </manifest>
