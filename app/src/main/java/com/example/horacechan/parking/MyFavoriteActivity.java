@@ -4,11 +4,16 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.amap.api.location.AMapLocation;
+import com.amap.api.location.AMapLocationClient;
+import com.amap.api.location.AMapLocationClientOption;
+import com.amap.api.location.AMapLocationListener;
 import com.example.horacechan.parking.api.LocalHost;
 import com.example.horacechan.parking.api.http.base.BaseResponse;
 import com.example.horacechan.parking.api.http.base.BaseResponseListener;
@@ -20,7 +25,7 @@ import com.example.horacechan.parking.util.UserFavoriteListAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyFavoriteActivity extends ActionBarActivity implements BaseResponseListener {
+public class MyFavoriteActivity extends ActionBarActivity implements BaseResponseListener,AMapLocationListener {
 
     ListView favoriteList;
 
@@ -29,6 +34,20 @@ public class MyFavoriteActivity extends ActionBarActivity implements BaseRespons
 
     FavoriteMarkerListRequest favoriteMarkerListRequest;
     FavoriteMarkerDeleteRequest favoriteMarkerDeleteRequest;
+//
+//    //声明AMapLocationClient类对象
+//    public AMapLocationClient mLocationClient = null;
+//    //声明定位回调监听器
+//    public AMapLocationListener mLocationListener = new AMapLocationListener();
+//    //声明mLocationOption对象
+//    public AMapLocationClientOption mLocationOption = null;
+
+    private AMapLocationClient locationClient = null;
+    private AMapLocationClientOption locationOption = null;
+
+    private double currentLatitude = 0.0;
+    private double currentLongitude = 0.0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +62,39 @@ public class MyFavoriteActivity extends ActionBarActivity implements BaseRespons
 
         itemOnClickListener();
 
-
         FavoriteMarkerListRequestShow();
+
+        locationClient = new AMapLocationClient(this.getApplicationContext());
+        locationOption = new AMapLocationClientOption();
+        // 设置定位模式为高精度模式
+        locationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+        // 设置定位监听
+        locationClient.setLocationListener(this);
+        locationClient.startLocation();
+
+//        //初始化定位
+//        mLocationClient = new AMapLocationClient(getApplicationContext());
+//        //设置定位回调监听
+//        mLocationClient.setLocationListener(mLocationListener);
+//
+//        //初始化定位参数
+//        mLocationOption = new AMapLocationClientOption();
+//        //设置定位模式为高精度模式，Battery_Saving为低功耗模式，Device_Sensors是仅设备模式
+//        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+//        //设置是否返回地址信息（默认返回地址信息）
+//        mLocationOption.setNeedAddress(true);
+//        //设置是否只定位一次,默认为false
+//        mLocationOption.setOnceLocation(false);
+//        //设置是否强制刷新WIFI，默认为强制刷新
+//        mLocationOption.setWifiActiveScan(true);
+//        //设置是否允许模拟位置,默认为false，不允许模拟位置
+//        mLocationOption.setMockEnable(false);
+//        //设置定位间隔,单位毫秒,默认为2000ms
+//        mLocationOption.setInterval(2000);
+//        //给定位客户端对象设置定位参数
+//        mlocationClient.setLocationOption(mLocationOption);
+//        //启动定位
+//        mlocationClient.startLocation();
 
     }
 
@@ -62,6 +112,7 @@ public class MyFavoriteActivity extends ActionBarActivity implements BaseRespons
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //点击事件
                 //TODO:新Activity导航到目的地-->获取当前位置-->获取marker位置-->导航
+                Toast.makeText(MyFavoriteActivity.this, String.valueOf(currentLatitude),Toast.LENGTH_LONG).show();
             }
         });
         favoriteList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -129,6 +180,42 @@ public class MyFavoriteActivity extends ActionBarActivity implements BaseRespons
                     Toast.makeText(this, response.getMsg(), Toast.LENGTH_SHORT).show();
                 }
                 break;
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        locationClient.startLocation();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        locationClient.stopLocation();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (null != locationClient) {
+            locationClient.onDestroy();
+            locationClient = null;
+            locationOption = null;
+        }
+    }
+
+    @Override
+    public void onLocationChanged(AMapLocation aMapLocation) {
+        if (aMapLocation != null) {
+            if (aMapLocation.getErrorCode() == 0){
+                currentLatitude = aMapLocation.getLatitude();//获取纬度
+                currentLongitude = aMapLocation.getLongitude();//获取经度
+            }else {
+                Log.e("AmapError", "location Error, ErrCode:"
+                        + aMapLocation.getErrorCode() + ", errInfo:"
+                        + aMapLocation.getErrorInfo());
+            }
         }
     }
 }
