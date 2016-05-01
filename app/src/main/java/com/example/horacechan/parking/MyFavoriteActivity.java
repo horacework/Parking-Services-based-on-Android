@@ -2,6 +2,7 @@ package com.example.horacechan.parking;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -19,6 +20,8 @@ import com.example.horacechan.parking.api.http.base.BaseResponse;
 import com.example.horacechan.parking.api.http.base.BaseResponseListener;
 import com.example.horacechan.parking.api.http.request.FavoriteMarkerDeleteRequest;
 import com.example.horacechan.parking.api.http.request.FavoriteMarkerListRequest;
+import com.example.horacechan.parking.api.http.request.GetMarkLocationRequest;
+import com.example.horacechan.parking.api.model.MarkId;
 import com.example.horacechan.parking.api.model.UserFavoriteEntity;
 import com.example.horacechan.parking.util.UserFavoriteListAdapter;
 
@@ -34,13 +37,7 @@ public class MyFavoriteActivity extends ActionBarActivity implements BaseRespons
 
     FavoriteMarkerListRequest favoriteMarkerListRequest;
     FavoriteMarkerDeleteRequest favoriteMarkerDeleteRequest;
-//
-//    //声明AMapLocationClient类对象
-//    public AMapLocationClient mLocationClient = null;
-//    //声明定位回调监听器
-//    public AMapLocationListener mLocationListener = new AMapLocationListener();
-//    //声明mLocationOption对象
-//    public AMapLocationClientOption mLocationOption = null;
+    GetMarkLocationRequest getMarkLocationRequest;
 
     private AMapLocationClient locationClient = null;
     private AMapLocationClientOption locationOption = null;
@@ -60,9 +57,25 @@ public class MyFavoriteActivity extends ActionBarActivity implements BaseRespons
         adapter = new UserFavoriteListAdapter(this,datas);
         favoriteList.setAdapter(adapter);
 
+        //初始化请求
+        favoriteMarkerListRequest = new FavoriteMarkerListRequest();
+        favoriteMarkerListRequest.setOnResponseListener(this);
+        favoriteMarkerListRequest.setRequestType(0);
+
+        favoriteMarkerDeleteRequest = new FavoriteMarkerDeleteRequest();
+        favoriteMarkerDeleteRequest.setOnResponseListener(this);
+        favoriteMarkerDeleteRequest.setRequestType(1);
+
+        getMarkLocationRequest = new GetMarkLocationRequest();
+        getMarkLocationRequest.setOnResponseListener(this);
+        getMarkLocationRequest.setRequestType(2);
+
         itemOnClickListener();
 
         FavoriteMarkerListRequestShow();
+
+
+
 
         locationClient = new AMapLocationClient(this.getApplicationContext());
         locationOption = new AMapLocationClientOption();
@@ -72,36 +85,10 @@ public class MyFavoriteActivity extends ActionBarActivity implements BaseRespons
         locationClient.setLocationListener(this);
         locationClient.startLocation();
 
-//        //初始化定位
-//        mLocationClient = new AMapLocationClient(getApplicationContext());
-//        //设置定位回调监听
-//        mLocationClient.setLocationListener(mLocationListener);
-//
-//        //初始化定位参数
-//        mLocationOption = new AMapLocationClientOption();
-//        //设置定位模式为高精度模式，Battery_Saving为低功耗模式，Device_Sensors是仅设备模式
-//        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
-//        //设置是否返回地址信息（默认返回地址信息）
-//        mLocationOption.setNeedAddress(true);
-//        //设置是否只定位一次,默认为false
-//        mLocationOption.setOnceLocation(false);
-//        //设置是否强制刷新WIFI，默认为强制刷新
-//        mLocationOption.setWifiActiveScan(true);
-//        //设置是否允许模拟位置,默认为false，不允许模拟位置
-//        mLocationOption.setMockEnable(false);
-//        //设置定位间隔,单位毫秒,默认为2000ms
-//        mLocationOption.setInterval(2000);
-//        //给定位客户端对象设置定位参数
-//        mlocationClient.setLocationOption(mLocationOption);
-//        //启动定位
-//        mlocationClient.startLocation();
-
     }
 
     private void FavoriteMarkerListRequestShow() {
-        favoriteMarkerListRequest = new FavoriteMarkerListRequest();
-        favoriteMarkerListRequest.setOnResponseListener(this);
-        favoriteMarkerListRequest.setRequestType(0);
+
         favoriteMarkerListRequest.userId = LocalHost.INSTANCE.getUserid();
         favoriteMarkerListRequest.execute();
     }
@@ -110,9 +97,9 @@ public class MyFavoriteActivity extends ActionBarActivity implements BaseRespons
         favoriteList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                //点击事件
-                //TODO:新Activity导航到目的地-->获取当前位置-->获取marker位置-->导航
-                Toast.makeText(MyFavoriteActivity.this, String.valueOf(currentLatitude),Toast.LENGTH_LONG).show();
+                //点击事件，一键导航
+                getMarkLocationRequest.id = datas.get(i).getMarkerId();
+                getMarkLocationRequest.execute();
             }
         });
         favoriteList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -141,9 +128,7 @@ public class MyFavoriteActivity extends ActionBarActivity implements BaseRespons
     }
 
     private void deleteFavorite(int i) {
-        favoriteMarkerDeleteRequest = new FavoriteMarkerDeleteRequest();
-        favoriteMarkerDeleteRequest.setOnResponseListener(this);
-        favoriteMarkerDeleteRequest.setRequestType(1);
+
         favoriteMarkerDeleteRequest.id = datas.get(i).getId();
         favoriteMarkerDeleteRequest.userid = LocalHost.INSTANCE.getUserid();
         favoriteMarkerDeleteRequest.post();
@@ -180,7 +165,47 @@ public class MyFavoriteActivity extends ActionBarActivity implements BaseRespons
                     Toast.makeText(this, response.getMsg(), Toast.LENGTH_SHORT).show();
                 }
                 break;
+            case 2:
+                if (response.getStatus()==200){
+                    MarkId markId = (MarkId) response.getData();
+                    double endLatitude = markId.getLatitude();
+                    double endLongitude = markId.getLongitude();
+                    startNavi(endLatitude,endLongitude);
+                }else if (response.getStatus()==404){
+                    Toast.makeText(this, response.getMsg(), Toast.LENGTH_SHORT).show();
+                }
+                break;
         }
+    }
+
+    private void startNavi(double endLatitude, double endLongitude) {
+        final Intent intent = new Intent(MyFavoriteActivity.this, NaviActivity.class);
+        //发送当前位置
+        intent.putExtra("currentLatitude", currentLatitude);
+        intent.putExtra("currentLongitude", currentLongitude);
+        //发送目标Marker位置
+        intent.putExtra("endLatitude", endLatitude);
+        intent.putExtra("endLongitude", endLongitude);
+        //创建提示框
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle("提示")
+                .setMessage("选择导航模式")
+                .setPositiveButton("实时导航", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        intent.putExtra("isGPSNaviMode", true);
+                        startActivityForResult(intent, 1);
+                    }
+                })
+                .setNegativeButton("取消", null)
+                .setNeutralButton("模拟导航", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        intent.putExtra("isGPSNaviMode", false);
+                        startActivityForResult(intent, 1);
+                    }
+                })
+                .show();
     }
 
     @Override
