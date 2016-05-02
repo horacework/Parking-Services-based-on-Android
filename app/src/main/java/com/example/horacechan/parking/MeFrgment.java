@@ -225,8 +225,8 @@ public class MeFrgment extends Fragment implements BaseResponseListener {
 	}
 
 	private void checkMyOrder() {
-		//TODO:新Activity，查看我的预定以及状态 List
-		Toast.makeText(getActivity(),"正在建设中",Toast.LENGTH_SHORT).show();
+		Intent i = new Intent(getActivity(),MyOrderActivity.class);
+		startActivity(i);
 	}
 
 	private void setMyCar() {

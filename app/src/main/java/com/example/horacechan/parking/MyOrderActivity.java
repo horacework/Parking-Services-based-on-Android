@@ -18,26 +18,25 @@ import com.amap.api.location.AMapLocationListener;
 import com.example.horacechan.parking.api.LocalHost;
 import com.example.horacechan.parking.api.http.base.BaseResponse;
 import com.example.horacechan.parking.api.http.base.BaseResponseListener;
-import com.example.horacechan.parking.api.http.request.FavoriteMarkerDeleteRequest;
-import com.example.horacechan.parking.api.http.request.FavoriteMarkerListRequest;
 import com.example.horacechan.parking.api.http.request.GetMarkLocationRequest;
+import com.example.horacechan.parking.api.http.request.OrderDeleteRequest;
+import com.example.horacechan.parking.api.http.request.OrderListRequest;
 import com.example.horacechan.parking.api.model.MarkId;
-import com.example.horacechan.parking.api.model.UserFavoriteEntity;
-import com.example.horacechan.parking.util.UserFavoriteListAdapter;
+import com.example.horacechan.parking.api.model.UserOrderEntity;
+import com.example.horacechan.parking.util.UserOrderListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyFavoriteActivity extends ActionBarActivity implements BaseResponseListener,AMapLocationListener {
+public class MyOrderActivity extends ActionBarActivity implements BaseResponseListener, AMapLocationListener {
 
-    ListView favoriteList;
-
-    private List<UserFavoriteEntity> datas;
-    private UserFavoriteListAdapter adapter;
-
-    FavoriteMarkerListRequest favoriteMarkerListRequest;
-    FavoriteMarkerDeleteRequest favoriteMarkerDeleteRequest;
+    ListView MyOrderList;
+    OrderListRequest orderListRequest;
+    OrderDeleteRequest orderDeleteRequest;
     GetMarkLocationRequest getMarkLocationRequest;
+
+    private List<UserOrderEntity> datas;
+    private UserOrderListAdapter adapter;
 
     private AMapLocationClient locationClient = null;
     private AMapLocationClientOption locationOption = null;
@@ -45,35 +44,32 @@ public class MyFavoriteActivity extends ActionBarActivity implements BaseRespons
     private double currentLatitude = 0.0;
     private double currentLongitude = 0.0;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_favorite);
+        setContentView(R.layout.activity_my_order);
 
-        favoriteList = (ListView) findViewById(R.id.favoriteList);
+        MyOrderList = (ListView) findViewById(R.id.MyOrderList);
 
         datas = new ArrayList<>();
-        adapter = new UserFavoriteListAdapter(this,datas);
-        favoriteList.setAdapter(adapter);
+        adapter = new UserOrderListAdapter(this,datas);
+        MyOrderList.setAdapter(adapter);
 
-        //初始化请求
-        favoriteMarkerListRequest = new FavoriteMarkerListRequest();
-        favoriteMarkerListRequest.setOnResponseListener(this);
-        favoriteMarkerListRequest.setRequestType(0);
-
-        favoriteMarkerDeleteRequest = new FavoriteMarkerDeleteRequest();
-        favoriteMarkerDeleteRequest.setOnResponseListener(this);
-        favoriteMarkerDeleteRequest.setRequestType(1);
+        orderListRequest = new OrderListRequest();
+        orderListRequest.setOnResponseListener(this);
+        orderListRequest.setRequestType(0);
 
         getMarkLocationRequest = new GetMarkLocationRequest();
         getMarkLocationRequest.setOnResponseListener(this);
-        getMarkLocationRequest.setRequestType(2);
+        getMarkLocationRequest.setRequestType(1);
+
+        orderDeleteRequest = new OrderDeleteRequest();
+        orderDeleteRequest.setOnResponseListener(this);
+        orderDeleteRequest.setRequestType(2);
 
         itemOnClickListener();
 
-        FavoriteMarkerListRequestShow();
-
+        orderListRequestShow();
 
         locationClient = new AMapLocationClient(this.getApplicationContext());
         locationOption = new AMapLocationClientOption();
@@ -85,34 +81,30 @@ public class MyFavoriteActivity extends ActionBarActivity implements BaseRespons
 
     }
 
-    private void FavoriteMarkerListRequestShow() {
-
-        favoriteMarkerListRequest.userId = LocalHost.INSTANCE.getUserid();
-        favoriteMarkerListRequest.execute();
+    private void orderListRequestShow() {
+        orderListRequest.userid = LocalHost.INSTANCE.getUserid();
+        orderListRequest.execute();
     }
 
     private void itemOnClickListener() {
-        favoriteList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        MyOrderList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                //点击事件，一键导航
                 getMarkLocationRequest.id = datas.get(i).getMarkerId();
                 getMarkLocationRequest.execute();
             }
         });
-        favoriteList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        MyOrderList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                //长按事件，取消收藏该停车场
-                comfirmdeleteFavorite(i);
+                comfirmDeleteOrder(i);
                 return true;
             }
         });
-
     }
 
-    private void comfirmdeleteFavorite(final int i){
-        AlertDialog.Builder isExitLog = new AlertDialog.Builder(MyFavoriteActivity.this);
+    private void comfirmDeleteOrder(final int i){
+        AlertDialog.Builder isExitLog = new AlertDialog.Builder(MyOrderActivity.this);
         isExitLog.setTitle("提示")
                 .setMessage("确定删除此收藏？")
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -127,9 +119,9 @@ public class MyFavoriteActivity extends ActionBarActivity implements BaseRespons
 
     private void deleteFavorite(int i) {
 
-        favoriteMarkerDeleteRequest.id = datas.get(i).getId();
-        favoriteMarkerDeleteRequest.userid = LocalHost.INSTANCE.getUserid();
-        favoriteMarkerDeleteRequest.post();
+        orderDeleteRequest.orderid = datas.get(i).getOrderId();
+        orderDeleteRequest.userid = LocalHost.INSTANCE.getUserid();
+        orderDeleteRequest.post();
     }
 
     @Override
@@ -147,7 +139,7 @@ public class MyFavoriteActivity extends ActionBarActivity implements BaseRespons
         switch (response.getRequestType()){
             case 0:
                 if (response.getStatus()==200){
-                    List<UserFavoriteEntity> info = (List<UserFavoriteEntity>) response.getArrayList();
+                    List<UserOrderEntity> info = (List<UserOrderEntity>) response.getArrayList();
                     datas.clear();
                     datas.addAll(info);
                     adapter.notifyDataSetChanged();
@@ -157,14 +149,6 @@ public class MyFavoriteActivity extends ActionBarActivity implements BaseRespons
                 break;
             case 1:
                 if (response.getStatus()==200){
-                    Toast.makeText(this, response.getMsg(), Toast.LENGTH_SHORT).show();
-                    FavoriteMarkerListRequestShow();
-                }else if (response.getStatus()==404){
-                    Toast.makeText(this, response.getMsg(), Toast.LENGTH_SHORT).show();
-                }
-                break;
-            case 2:
-                if (response.getStatus()==200){
                     MarkId markId = (MarkId) response.getData();
                     double endLatitude = markId.getLatitude();
                     double endLongitude = markId.getLongitude();
@@ -173,11 +157,19 @@ public class MyFavoriteActivity extends ActionBarActivity implements BaseRespons
                     Toast.makeText(this, response.getMsg(), Toast.LENGTH_SHORT).show();
                 }
                 break;
+            case 2:
+                if (response.getStatus()==200){
+                    Toast.makeText(this, response.getMsg(), Toast.LENGTH_SHORT).show();
+                    orderListRequestShow();
+                }else if (response.getStatus()==404){
+                    Toast.makeText(this, response.getMsg(), Toast.LENGTH_SHORT).show();
+                }
+                break;
         }
     }
 
     private void startNavi(double endLatitude, double endLongitude) {
-        final Intent intent = new Intent(MyFavoriteActivity.this, NaviActivity.class);
+        final Intent intent = new Intent(MyOrderActivity.this, NaviActivity.class);
         //发送当前位置
         intent.putExtra("currentLatitude", currentLatitude);
         intent.putExtra("currentLongitude", currentLongitude);
@@ -206,6 +198,8 @@ public class MyFavoriteActivity extends ActionBarActivity implements BaseRespons
                 .show();
     }
 
+
+    //地图定位功能控制
     @Override
     public void onResume() {
         super.onResume();
@@ -227,6 +221,7 @@ public class MyFavoriteActivity extends ActionBarActivity implements BaseRespons
             locationOption = null;
         }
     }
+
 
     @Override
     public void onLocationChanged(AMapLocation aMapLocation) {

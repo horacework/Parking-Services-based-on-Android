@@ -43,5 +43,6 @@
     <string name="title_activity_my_advice">意见反馈</string>
     <string name="title_activity_my_parkinglog">停车记录</string>
     <string name="title_activity_my_favorite">已收藏的停车场</string>
+    <string name="title_activity_my_order">我的预定</string>
 
 </resources>
