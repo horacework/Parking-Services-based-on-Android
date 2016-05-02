@@ -2,10 +2,12 @@
 
 ## 停车场信息服务平台（Android客户端）
 
+主页面有以下四个Fregment：
+
 * 提供停车场位置地图显示并导航到终点（已完成）
-* 预订在规定时间地点的停车位（如可以增加支付功能）
+* 预订在规定时间地点的停车位（如可以增加支付功能）（进行中）
 * 周围景点推荐
-* 个人信息登录与注册（进行中）
+* 个人信息登录与注册（已完成）
 
 相应匹配的**服务器端**项目地址：[github.com/horacework/Parking-Services-based-on-Spring-New](https://github.com/horacework/Parking-Services-based-on-Spring-New)
 
