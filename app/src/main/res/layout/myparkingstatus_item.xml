@@ -3,6 +3,8 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/bg_item"
+    android:gravity="center"
     android:padding="20dp">
 
     <LinearLayout
@@ -19,15 +21,15 @@
             android:textSize="25sp"
             android:textStyle="bold"/>
         <TextView
-            android:id="@+id/enterTime"
+            android:id="@+id/stayTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="入：2016年12月22日"/>
+            android:text="计费时间：约1小时15分钟"/>
         <TextView
-            android:id="@+id/leaveTime"
+            android:id="@+id/yourPay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="出：2016年12月22日"/>
+            android:text="预估费用：150 元"/>
     </LinearLayout>
 
     <LinearLayout
@@ -37,7 +39,7 @@
         android:gravity="center|right"
         android:orientation="vertical">
         <TextView
-            android:id="@+id/myCar"
+            android:id="@+id/carNum"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@android:color/black"
