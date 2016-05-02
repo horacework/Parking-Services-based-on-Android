@@ -46,4 +46,12 @@
     <string name="title_activity_my_order">我的预定</string>
     <string name="title_activity_my_parking_status">我的停车状态</string>
 
+
+    <!--Teb_Book-->
+    <string name="tab_book_bookMarker">预订车场：</string>
+    <string name="tab_book_bookDate">预订日期：</string>
+    <string name="tab_book_bookTime">预订时间：</string>
+    <string name="tab_book_bookBtn">预约</string>
+
+
 </resources>
