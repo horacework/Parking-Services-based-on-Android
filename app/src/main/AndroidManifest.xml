@@ -78,7 +78,10 @@
             android:label="@string/title_activity_my_favorite" />
         <activity
             android:name=".MyOrderActivity"
-            android:label="@string/title_activity_my_order"></activity>
+            android:label="@string/title_activity_my_order" />
+        <activity
+            android:name=".api.http.request.MyParkingStatusActivity"
+            android:label="@string/title_activity_my_parking_status"></activity>
     </application>
 
 </manifest>

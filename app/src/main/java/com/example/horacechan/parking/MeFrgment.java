@@ -20,6 +20,8 @@ import com.example.horacechan.parking.api.http.base.BaseResponse;
 import com.example.horacechan.parking.api.http.base.BaseResponseListener;
 import com.example.horacechan.parking.api.http.request.LogoutRequest;
 import com.example.horacechan.parking.api.http.request.MoneyRemainRequest;
+import com.example.horacechan.parking.api.http.request.MyParkingStatusActivity;
+import com.example.horacechan.parking.api.http.request.ParkingStatusRequest;
 import com.example.horacechan.parking.api.model.UsermoneyEntity;
 import com.example.horacechan.parking.util.DeviceUtils;
 
@@ -42,10 +44,11 @@ public class MeFrgment extends Fragment implements BaseResponseListener {
 	String isLoginUserId = null;
 	String isLoginUserName = null;
 	String isLoginUserCar = null;
-	String isLoginUserState = null;
+	boolean isLoginUserState = false;
 
 	LogoutRequest mLogoutRequest;
 	MoneyRemainRequest mMoneyRemainRequest;
+	ParkingStatusRequest mParkingStatusRequest;
 
 	SharedPreferences.Editor editor;
 
@@ -74,8 +77,14 @@ public class MeFrgment extends Fragment implements BaseResponseListener {
 		isLoginUserName = LocalHost.INSTANCE.getUserName();
 		isLoginUserCar = LocalHost.INSTANCE.getUserCar();
 		userName.setText(isLoginUserName);
-		//TODO: 发送请求当前有没有车子在停车并显示
-		userState.setText("当前没有车子在停车场停车");
+
+		//获取用户当前停车状态
+		mParkingStatusRequest = new ParkingStatusRequest();
+		mParkingStatusRequest.setOnResponseListener(this);
+		mParkingStatusRequest.setRequestType(2);
+		mParkingStatusRequest.userId = isLoginUserId;
+		mParkingStatusRequest.execute();
+
 		userInfoLy.setVisibility(View.VISIBLE);
 		logoutBtn.setVisibility(View.VISIBLE);
 		//更新车牌
@@ -241,8 +250,11 @@ public class MeFrgment extends Fragment implements BaseResponseListener {
 	}
 
 	private void userStateInfo() {
-		//TODO:新Activity，这是有车子在停，显示在哪里已经停了多久，大概要收多少钱
-		Toast.makeText(getActivity(),"正在建设中",Toast.LENGTH_SHORT).show();
+
+		if (isLoginUserState){
+			Intent i = new Intent(getActivity(),MyParkingStatusActivity.class);
+			startActivity(i);
+		}
 	}
 
 	private void userLogin() {
@@ -314,8 +326,17 @@ public class MeFrgment extends Fragment implements BaseResponseListener {
 					MyMoneyRemain.setText(usermoneyEntity.getRemain() + "元");
 					//Toast.makeText(getActivity(), usermoneyEntity.getUserId(), Toast.LENGTH_LONG).show();
 					MyMoneyRemain.setVisibility(View.VISIBLE);
-
-
+					break;
+				case 2:
+					int num = (int) response.getData();
+					if (num == 0) {
+						isLoginUserState = false;
+						userState.setText("当前没有车子在停车场停车");
+					}else {
+						isLoginUserState = true;
+						userState.setText("当前有" + num + "辆车子在停车场停车>>>>");
+					}
+					break;
 			}
 		}else if (response.getStatus()==404){
 			Toast.makeText(getActivity(), response.getMsg(), Toast.LENGTH_LONG).show();
