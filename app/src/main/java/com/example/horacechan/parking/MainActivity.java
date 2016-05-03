@@ -2,6 +2,7 @@ package com.example.horacechan.parking;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -16,6 +17,9 @@ import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.horacechan.parking.api.LocalHost;
 
 
 public class MainActivity extends FragmentActivity implements OnClickListener {
@@ -40,8 +44,10 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
     private Fragment mTabFragTansuo;
     private Fragment mTabFragMe;
 
+    private ImageButton scanBtn;
+
     //记录用户是否已登录
-    //public boolean isLogin = true;
+    //public boolean isLogin = false;
 
     private final int fontColorUnSelect = 0xff272636;
     private final int fontColorBeSelect = 0xff11CD6E;
@@ -80,6 +86,21 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
         mFontTansuo = (TextView) findViewById(R.id.Font_Tansuo);
         mFontMe = (TextView) findViewById(R.id.Font_Me);
 
+        scanBtn = (ImageButton) findViewById(R.id.scanBtn);
+
+        scanBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (LocalHost.INSTANCE.getUserid()==null){
+                    Toast.makeText(MainActivity.this,"请先登录",Toast.LENGTH_LONG).show();
+                }else if(LocalHost.INSTANCE.getUserCar().equals("")){
+                    Toast.makeText(MainActivity.this,"请先设置你的车牌",Toast.LENGTH_LONG).show();
+                }else{
+                    Intent i = new Intent(MainActivity.this,scanQRCodeActivity.class);
+                    startActivity(i);
+                }
+            }
+        });
     }
 
     private void setSelect(int i) {

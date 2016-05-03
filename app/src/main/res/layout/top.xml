@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="45dp"
-    android:background="#000000"
-    android:gravity="center"
-    
-    android:orientation="vertical" >
+    android:paddingLeft="15dp"
+    android:paddingRight="15dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
+    android:background="#000000" >
 
     <TextView
         android:id="@+id/textView1"
@@ -15,6 +16,18 @@
         android:layout_gravity="center"
         android:textColor="#ffffff"
         android:textSize="20sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 
-</LinearLayout>
+    <ImageButton
+        android:id="@+id/scanBtn"
+        android:layout_gravity="right"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:background="@mipmap/scan"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+</RelativeLayout>

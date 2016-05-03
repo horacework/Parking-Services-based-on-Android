@@ -81,7 +81,10 @@
             android:label="@string/title_activity_my_order" />
         <activity
             android:name=".api.http.request.MyParkingStatusActivity"
-            android:label="@string/title_activity_my_parking_status"></activity>
+            android:label="@string/title_activity_my_parking_status" />
+        <activity
+            android:name=".scanQRCodeActivity"
+            android:label="@string/title_activity_scan_qrcode"></activity>
     </application>
 
 </manifest>
