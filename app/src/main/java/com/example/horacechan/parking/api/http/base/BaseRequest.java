@@ -59,6 +59,9 @@ public class BaseRequest extends Request<BaseResponse> {
             if (json!=null){
                 baseResponse.setStatus(json.optInt("stateCode"));
                 baseResponse.setMsg(json.optString("msg"));
+                if (TextUtils.isEmpty(baseResponse.getMsg())){
+                    baseResponse.setMsg(json.optString("message"));
+                }
             }
             baseResponse.setJsonStr(responseStr);
             mClient.parseResponse(baseResponse, json);

@@ -140,7 +140,11 @@ public class BookFrgment extends Fragment implements BaseResponseListener {
 					public void onTimeSet(TimePicker timePicker, int i, int i1) {
 						hour = i;
 						minute = i1;
-						bookTime.setText(hour+":"+minute);
+						if (minute<10){
+							bookTime.setText(hour+":0"+minute);
+						}else {
+							bookTime.setText(hour+":"+minute);
+						}
 					}
 				},hour,minute,true);
 				tpd.show();

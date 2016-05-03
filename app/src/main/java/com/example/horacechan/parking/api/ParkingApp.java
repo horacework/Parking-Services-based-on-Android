@@ -15,6 +15,8 @@ public class ParkingApp extends Application {
 
     public static final String HOST="http://192.168.199.246:8080/client";
 
+    public static final String BaiduAk="tca2mmjlwcGmPnRcbEu9t7n3mecqUYKa";
+
     // 读
     public static SharedPreferences sPreferences;
     // 写
