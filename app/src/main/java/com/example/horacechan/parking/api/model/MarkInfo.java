@@ -22,7 +22,7 @@ public class MarkInfo {
     private int longitude;
     private int zan;
     private int isDel;
-    private int price;
+    private double price;
 
     public String getId() {
         return id;
@@ -72,11 +72,11 @@ public class MarkInfo {
         this.isDel = isDel;
     }
 
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
