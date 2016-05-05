@@ -63,7 +63,6 @@ public class MyParkinglogActivity extends ActionBarActivity implements BaseRespo
             }
         }else if (response.getStatus()==404){
             Toast.makeText(this, response.getMsg(), Toast.LENGTH_LONG).show();
-            finish();
         }
     }
 }

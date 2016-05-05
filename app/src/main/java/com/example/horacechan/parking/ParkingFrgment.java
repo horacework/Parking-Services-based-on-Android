@@ -32,8 +32,11 @@ import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
+import com.example.horacechan.parking.api.LocalHost;
 import com.example.horacechan.parking.api.http.base.BaseResponse;
 import com.example.horacechan.parking.api.http.base.BaseResponseListener;
+import com.example.horacechan.parking.api.http.request.FavoriteCheckRequest;
+import com.example.horacechan.parking.api.http.request.FavoriteMarkerAddRequest;
 import com.example.horacechan.parking.api.http.request.GetMarkIdRequest;
 import com.example.horacechan.parking.api.http.request.GetMarkRequest;
 import com.example.horacechan.parking.api.model.MarkId;
@@ -75,6 +78,10 @@ public class ParkingFrgment extends Fragment implements LocationSource, AMapLoca
 
     private GetMarkRequest mRequest;
     private GetMarkIdRequest markIdRequest;
+    private FavoriteCheckRequest favoriteCheckRequest;
+    private FavoriteMarkerAddRequest favoriteMarkerAddRequest;
+
+    boolean zanBtnIsCheck = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -107,6 +114,13 @@ public class ParkingFrgment extends Fragment implements LocationSource, AMapLoca
         markIdRequest.setRequestType(1);
         markIdRequest.execute();
 
+        favoriteCheckRequest = new FavoriteCheckRequest();
+        favoriteCheckRequest.setOnResponseListener(this);
+        favoriteCheckRequest.setRequestType(2);
+
+        favoriteMarkerAddRequest = new FavoriteMarkerAddRequest();
+        favoriteMarkerAddRequest.setOnResponseListener(this);
+        favoriteMarkerAddRequest.setRequestType(3);
 
         MarkerOptions markerOptions = new MarkerOptions();
 
@@ -206,11 +220,18 @@ public class ParkingFrgment extends Fragment implements LocationSource, AMapLoca
             @Override
             public void onClick(View view) {
                 //先判断用户是否登录
-                if (true){
-                    String currentZanText = (String) mMarkerInfoZanNum.getText();
-                    int currentZanNum = Integer.valueOf(currentZanText) ;
-                    mMarkerInfoZanImg.setImageResource(R.mipmap.map_zan_checked);
-                    mMarkerInfoZanNum.setText(String.valueOf(currentZanNum + 1));
+                if (LocalHost.INSTANCE.getUserid()!=null){
+                    if (zanBtnIsCheck){
+                        Toast.makeText(getActivity(), "您已经收藏过此车场", Toast.LENGTH_SHORT).show();
+                    }else{
+                        String currentZanText = (String) mMarkerInfoZanNum.getText();
+                        int currentZanNum = Integer.valueOf(currentZanText);
+                        zanBtnIsCheck = true;
+                        mMarkerInfoZanImg.setImageResource(R.mipmap.map_zan_checked);
+                        mMarkerInfoZanNum.setText(String.valueOf(currentZanNum + 1));
+                        favoriteMarkerAddRequest.userId = LocalHost.INSTANCE.getUserid();
+                        favoriteMarkerAddRequest.post();
+                    }
                 }else {
                     Toast.makeText(getActivity(), "点赞前请先登录", Toast.LENGTH_SHORT).show();
                 }
@@ -408,11 +429,33 @@ public class ParkingFrgment extends Fragment implements LocationSource, AMapLoca
                     mMarkerInfoZanNum.setText(String.valueOf(info.getZan()));
                     //TODO: HTTP img获取并显示
                     mMarkerInfoImg.setImageResource(R.mipmap.a03);
-                    mMarkerInfoLy.setVisibility(View.VISIBLE);
+                    favoriteMarkerAddRequest.markerId = info.getId();
+                    if (LocalHost.INSTANCE.getUserid()==null){
+                        mMarkerInfoLy.setVisibility(View.VISIBLE);
+                    }else {
+                        favoriteCheckRequest.userId = LocalHost.INSTANCE.getUserid();
+                        favoriteCheckRequest.markerId = info.getId();
+                        favoriteCheckRequest.execute();
+                    }
                     break;
                 case 1:
                     List<MarkId> AllMarkerId = (List<MarkId>) response.getArrayList();
                     addOverlays(AllMarkerId);
+                    break;
+                case 2:
+                    if (response.getMsg().equals("用户已收藏")){
+                        zanBtnIsCheck = true;
+                        mMarkerInfoZanImg.setImageResource(R.mipmap.map_zan_checked);
+                        mMarkerInfoLy.setVisibility(View.VISIBLE);
+                    }else if (response.getMsg().equals("用户未收藏")){
+                        zanBtnIsCheck = false;
+                        mMarkerInfoZanImg.setImageResource(R.mipmap.map_zan);
+                        mMarkerInfoLy.setVisibility(View.VISIBLE);
+                    }
+                    break;
+                case 3:
+
+                    break;
             }
 
         }

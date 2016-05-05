@@ -69,7 +69,7 @@ public class UserParkingLogAdapter extends BaseAdapter {
             parkName = (TextView) v.findViewById(R.id.parkName);
             enterTime = (TextView) v.findViewById(R.id.enterTime);
             leaveTime = (TextView) v.findViewById(R.id.leaveTime);
-            carNum = (TextView) v.findViewById(R.id.carNum);
+            carNum = (TextView) v.findViewById(R.id.myCar);
 
         }
     }
