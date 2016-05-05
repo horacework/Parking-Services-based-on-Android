@@ -6,8 +6,10 @@
 
 * 提供停车场位置地图显示并导航到终点（已完成）
 * 预订在规定时间地点的停车位（如可以增加支付功能）（已完成）
-* 周围景点推荐（进行中）
+* 周围景点推荐（已完成）
 * 个人信息登录与注册（已完成）
+
+相应匹配的**Android客户端**项目地址：[github.com/horacework/Parking-Services-based-on-Android-Door](https://github.com/horacework/Parking-Services-based-on-Android-Door)
 
 相应匹配的**服务器端**项目地址：[github.com/horacework/Parking-Services-based-on-Spring-New](https://github.com/horacework/Parking-Services-based-on-Spring-New)
 
