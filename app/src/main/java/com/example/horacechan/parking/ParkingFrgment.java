@@ -122,15 +122,15 @@ public class ParkingFrgment extends Fragment implements LocationSource, AMapLoca
         favoriteMarkerAddRequest.setOnResponseListener(this);
         favoriteMarkerAddRequest.setRequestType(3);
 
-        MarkerOptions markerOptions = new MarkerOptions();
-
-        markerOptions.position(new LatLng(23.0446140612, 113.3950857036));
-
-        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.maker));
+//        MarkerOptions markerOptions = new MarkerOptions();
+//
+//        markerOptions.position(new LatLng(23.0446140612, 113.3950857036));
+//
+//        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.mipmap.maker));
 
         //addOverlays(ParkingInfo.infos);
 
-        Marker marker = aMap.addMarker(markerOptions);
+//        Marker marker = aMap.addMarker(markerOptions);
 
 
         // 对amap添加单击地图事件监听器

@@ -34,16 +34,28 @@ public class scanQRCodeActivity extends ActionBarActivity implements OnQRCodeRea
     public void onQRCodeRead(String text, PointF[] points) {
 
         mydecoderview.getCameraManager().stopPreview();
-        Toast.makeText(scanQRCodeActivity.this, text, Toast.LENGTH_LONG).show();
-        String logid = text.split(",")[0];
-        String markerid = text.split(",")[1];
+        //Toast.makeText(scanQRCodeActivity.this, text, Toast.LENGTH_LONG).show();
+        String logid = null;
+        String markerid = null;
+        try {
+            logid = text.split(",")[0];
+            markerid = text.split(",")[1];
+        } catch (Exception e) {
+            Toast.makeText(scanQRCodeActivity.this, "这不是有效的二维码", Toast.LENGTH_LONG).show();
+            Toast.makeText(scanQRCodeActivity.this, "但是二维码内容是："+text, Toast.LENGTH_LONG).show();
+            finish();
+        }
 
-        scanQRRequest.logid = logid;
-        scanQRRequest.userid = LocalHost.INSTANCE.getUserid();
-        scanQRRequest.carid = LocalHost.INSTANCE.getUserCar();
-        scanQRRequest.markerid = markerid;
+//        if (logid.equals("")||markerid.equals("")){
+//
+//        }else{
+            scanQRRequest.logid = logid;
+            scanQRRequest.userid = LocalHost.INSTANCE.getUserid();
+            scanQRRequest.carid = LocalHost.INSTANCE.getUserCar();
+            scanQRRequest.markerid = markerid;
+            scanQRRequest.post();
+        //}
 
-        scanQRRequest.post();
     }
 
     @Override
